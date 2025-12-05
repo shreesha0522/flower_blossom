@@ -115,7 +115,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Back to login link
+                
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context); // back to login
