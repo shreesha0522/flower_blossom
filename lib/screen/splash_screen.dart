@@ -9,7 +9,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Trigger navigation after 3 seconds
     Future.delayed(Duration(seconds: 3), () {
-      // ignore: use_build_context_synchronously
+      
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()) );
 
     });
