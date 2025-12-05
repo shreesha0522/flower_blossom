@@ -16,13 +16,7 @@ class BlossomApp extends StatelessWidget {
       title: 'Blossom',
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
-      // initialRoute: '/login', // 👈 start directly at login (or '/' if you want splash)
-      // routes: {
-      //   '/': (context) => SplashScreen(),
-      //   '/login': (context) => LoginScreen(),
-      //   '/dashboard': (context) => DashboardScreen(),
-   
-      // },
+      
     );
   }
 }
