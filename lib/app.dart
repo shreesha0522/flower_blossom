@@ -21,7 +21,7 @@ class BlossomApp extends StatelessWidget {
       //   '/': (context) => SplashScreen(),
       //   '/login': (context) => LoginScreen(),
       //   '/dashboard': (context) => DashboardScreen(),
-      //   '/signup': (context) => SignUpScreen(), // ✅ signup route
+   
       // },
     );
   }
