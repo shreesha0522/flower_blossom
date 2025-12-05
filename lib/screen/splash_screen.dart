@@ -1,4 +1,4 @@
-import 'package:flower_blossom/screen/login_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -10,12 +10,13 @@ class SplashScreen extends StatelessWidget {
     // Trigger navigation after 3 seconds
     Future.delayed(Duration(seconds: 3), () {
       
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()) );
+      Navigator.pushNamed(context, '/onboarding');
+
 
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFFCE4EC),
       body: Center(
         child: Image.asset(
           'assets/images/Picture1.png',

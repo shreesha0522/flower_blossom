@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/screen/signup_screen.dart';
 
+
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -37,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                   controller: emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.email, color:Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -49,7 +50,7 @@ class LoginScreen extends StatelessWidget {
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.lock, color:Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -64,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                     print("Login pressed: $email / $password");
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
+                    backgroundColor: Color.fromARGB(255, 229, 128, 162),
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -84,7 +85,7 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: const Text(
                     "Don’t have an account? Sign up",
-                    style: TextStyle(color: Color(0xFFA64CA6)),
+                    style: TextStyle(color: Color.fromARGB(255, 26, 26, 26)),
                   ),
                 ),
               ],

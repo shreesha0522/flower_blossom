@@ -11,10 +11,11 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCE4EC),
+      backgroundColor: const Color(0xFFFCE4EC), // soft pink background
       appBar: AppBar(
-        title: Text("SignUp Screen"),
-      ), // soft pink background
+        backgroundColor: const Color(0xFFFCE4EC),
+        title: const Text("SignUp Screen"),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -28,29 +29,19 @@ class SignUpScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 🌸 Logo
+                // 🌸 Blossom Logo
                 Image.asset(
                   'assets/images/Picture1.png',
                   height: 100,
                 ),
-                const SizedBox(height: 16),
-
-                const Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFA64CA6),
-                  ),
-                ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 // First Name
                 TextField(
                   controller: firstNameController,
                   decoration: const InputDecoration(
                     labelText: 'First Name',
-                    prefixIcon: Icon(Icons.person, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.person, color: Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -61,7 +52,7 @@ class SignUpScreen extends StatelessWidget {
                   controller: lastNameController,
                   decoration: const InputDecoration(
                     labelText: 'Last Name',
-                    prefixIcon: Icon(Icons.person_outline, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.person_outline, color: Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -72,7 +63,7 @@ class SignUpScreen extends StatelessWidget {
                   controller: addressController,
                   decoration: const InputDecoration(
                     labelText: 'Address',
-                    prefixIcon: Icon(Icons.home, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.home, color: Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -84,7 +75,7 @@ class SignUpScreen extends StatelessWidget {
                   obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock, color: Colors.pinkAccent),
+                    prefixIcon: Icon(Icons.lock, color:Color.fromARGB(255, 229, 128, 162)),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -98,11 +89,11 @@ class SignUpScreen extends StatelessWidget {
                     final address = addressController.text;
                     final password = passwordController.text;
 
-                    
+                    // ignore: avoid_print
                     print("Sign Up pressed: $firstName $lastName / $address / $password");
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
+                    backgroundColor: Color.fromARGB(255, 229, 128, 162),
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -111,18 +102,20 @@ class SignUpScreen extends StatelessWidget {
                   child: const Text(
                     'Sign Up',
                     style: TextStyle(fontWeight: FontWeight.bold),
+                    
+                    
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                
+                // Login redirect
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context); // back to login
                   },
                   child: const Text(
                     "Already have an account? Login",
-                    style: TextStyle(color: Color(0xFFA64CA6)),
+                    style: TextStyle(color:Color.fromARGB(255, 11, 11, 11)),
                   ),
                 ),
               ],
@@ -133,4 +126,3 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 }
-// shreesha
