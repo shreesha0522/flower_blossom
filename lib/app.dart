@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screen/splash_screen.dart';
-import 'screen/login_screen.dart';
-import 'screen/dashboard_screen.dart';
+
 
 void main() {
   runApp(const BlossomApp());
