@@ -13,23 +13,33 @@ class BlossomApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flower Blossom',
       debugShowCheckedModeBanner: false,
-
-      // 🌸 App theme
       theme: ThemeData(
         primarySwatch: Colors.pink,
         scaffoldBackgroundColor: Colors.white,
       ),
-
-      // 🌸 Start from Splash Screen
       initialRoute: '/',
 
-      // 🌸 Named Routes
       routes: {
         '/': (context) => const SplashScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
+      },
+
+      onGenerateRoute: (settings) {
+        if (settings.name == '/dashboard') {
+          final args = settings.arguments as Map<String, String>?;
+
+          return MaterialPageRoute(
+            builder: (context) => DashboardScreen(
+              firstName: args?['firstName'] ?? '',
+              lastName: args?['lastName'] ?? '',
+              email: args?['email'] ?? '',
+              address: args?['address'] ?? '',
+            ),
+          );
+        }
+        return null;
       },
     );
   }

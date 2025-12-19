@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/screen/signup_screen.dart';
-import 'package:flower_blossom/storage/user_storage.dart'; // import storage
+import 'package:flower_blossom/screen/dashboard_screen.dart';
+import 'package:flower_blossom/storage/user_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,9 +11,39 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  // ✅ Show message in the center
+  void showCenterMessage(String message, {Color color = const Color.fromARGB(255, 229, 128, 162)}) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (_) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+    Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 8)
-              ],
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
             ),
             child: Form(
               key: _formKey,
@@ -47,19 +76,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: emailController,
                     decoration: const InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: Color.fromARGB(255, 229, 128, 162),
-                      ),
+                      prefixIcon: Icon(Icons.email, color: Color.fromARGB(255, 229, 128, 162)),
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
+                      if (value == null || value.isEmpty) return 'Please enter your email';
                       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(value)) {
-                        return 'Enter a valid email';
+                        showCenterMessage('Enter a valid email', color: Colors.red.shade300);
+                        return '';
                       }
                       return null;
                     },
@@ -72,50 +97,56 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: Color.fromARGB(255, 229, 128, 162),
-                      ),
+                      prefixIcon: Icon(Icons.lock, color: Color.fromARGB(255, 229, 128, 162)),
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
+                      if (value == null || value.isEmpty) return 'Please enter your password';
+                      if (value.length < 8) return 'Password must be at least 8 characters';
                       return null;
                     },
                   ),
                   const SizedBox(height: 24),
 
-                  // ✅ LOGIN BUTTON
+                  // Login button
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         final email = emailController.text.trim();
                         final password = passwordController.text.trim();
+                        final user = UserStorage.loginUser(email, password);
 
-                        if (UserStorage.login(email, password)) {
-                          // Login success → navigate to dashboard
-                          Navigator.pushReplacementNamed(context, '/dashboard');
+                        if (user != null) {
+                          // ✅ Successful login → show center message
+                          showCenterMessage('Login successful!', color: const Color.fromARGB(255, 229, 128, 162));
+
+                          // Navigate to Dashboard after 2 seconds
+                          Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.pushReplacement(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DashboardScreen(
+                                  firstName: user.firstName,
+                                  lastName: user.lastName,
+                                  email: user.email,
+                                  address: user.address,
+                                ),
+                              ),
+                            );
+                          });
                         } else {
-                          // Show error if credentials not found
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Invalid credentials. Please sign up first.'),
-                            ),
-                          );
+                          // ❌ Invalid credentials → show center message
+                          showCenterMessage('Please sign up first', color: const Color.fromARGB(255, 229, 128, 162));
                         }
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 229, 128, 162),
+                      foregroundColor: Colors.black,
+
                       minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: const Text(
                       'Login',
@@ -129,9 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => const SignUpScreen()),
                       );
                     },
                     child: const Text(
