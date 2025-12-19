@@ -1,13 +1,52 @@
+// user_storage.dart
+
+class User {
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String address;
+  final String password;
+
+  User({
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.address,
+    required this.password,
+  });
+}
+
 class UserStorage {
-  static String? email;
-  static String? password;
+  static User? _user; // Store a single registered user
 
-  static void register(String regEmail, String regPassword) {
-    email = regEmail;
-    password = regPassword;
+  // ✅ Register a user with all information
+  static void register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String address,
+    required String password,
+  }) {
+    _user = User(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      address: address,
+      password: password,
+    );
   }
 
-  static bool login(String inputEmail, String inputPassword) {
-    return email == inputEmail && password == inputPassword;
+  // ✅ Login → returns the User if credentials match, else null
+  static User? loginUser(String email, String password) {
+    if (_user != null && _user!.email == email && _user!.password == password) {
+      return _user;
+    }
+    return null;
   }
+
+  // ✅ Getter methods for easy access (optional)
+  static String? get firstName => _user?.firstName;
+  static String? get lastName => _user?.lastName;
+  static String? get email => _user?.email;
+  static String? get address => _user?.address;
 }
