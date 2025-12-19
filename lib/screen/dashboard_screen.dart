@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'bottomscreen/home_screen.dart';
-// import 'bottomscreen/cart_screen.dart';
-// import 'bottomscreen/profile_screen.dart';
-// import 'bottomscreen/about_screen.dart';
+import 'bottomscreen/cart_screen.dart';
+import 'bottomscreen/profile_screen.dart';
+import 'bottomscreen/about_screen.dart';
 import '/models/cart_item.dart';
 import 'checkout_screen.dart';
 
@@ -43,17 +43,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
 
-      // CartScreen(cartItems: _cartItems),
+      CartScreen(cartItems: _cartItems),
 
-      // // ✅ PASS USER DATA TO PROFILE
-      // ProfileScreen(
-      //   firstName: widget.firstName,
-      //   lastName: widget.lastName,
-      //   email: widget.email,
-      //   address: widget.address, password: '',
-      // ),
+      // ✅ PASS USER DATA TO PROFILE
+      ProfileScreen(
+        firstName: widget.firstName,
+        lastName: widget.lastName,
+        email: widget.email,
+        address: widget.address, password: '',
+      ),
 
-      // const AboutScreen(userName: '',),
+      const AboutScreen(userName: '',),
 
       CheckoutScreen(
         cartItems: _cartItems,
