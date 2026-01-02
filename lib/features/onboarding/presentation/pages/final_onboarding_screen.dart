@@ -7,79 +7,71 @@ class FinalOnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> gardenActivities = [
-      "Plant Flowers",
-      "Flower Arrangement",
-      "Gardening Tips",
-      "Join Blossom Community",
-      "Flower Delivery",
-    ];
-
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              Text(
-                "Get Started With Blossom 🌸",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[800],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: gardenActivities
-                      .map(
-                        (activity) => Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.pinkAccent, width: 2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            activity,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
-                    minimumSize: const Size(200, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Start Exploring",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
+      body: Stack(
+        children: [
+          // Full screen background image
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/images/onboarding.png',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
+
+          // Optional overlay for readability
+          Container(color: Colors.black.withOpacity(0.2)),
+
+          // Bottom content with colored background
+          SafeArea(
+            child: Column(
+              children: [
+                const Spacer(), // push content to bottom
+
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  // bottom color
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Get Started With Blossom 🌸",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // title in black
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Explore activities, delivery, and join our flower-loving community.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black, // description in black
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 222, 136, 165),
+                          minimumSize: const Size(180, 50),
+                        ),
+                        child: const Text("Start Exploring"),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

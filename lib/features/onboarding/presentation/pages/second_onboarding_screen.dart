@@ -6,88 +6,73 @@ class SecondOnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> flowerTypes = [
-      "Roses",
-      "Tulips",
-      "Lilies",
-      "Sunflowers",
-      "Orchids",
-      "Daisies",
-    ];
-
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              Text(
-                "Choose Your Favorite Flowers 🌺",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[800],
-                ),
-              ),
-              const SizedBox(height: 30),
-              Expanded(
-                child: Center(
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
-                    children: flowerTypes
-                        .map(
-                          (flower) => Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.pinkAccent,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Center(
-                              child: Text(
-                                flower,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FinalOnboardingScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
-                    minimumSize: const Size(200, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Continue",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-            ],
+      body: Stack(
+        children: [
+          // Full screen background image
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/images/onboarding.png',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
+
+          // Optional dark overlay for readability
+          Container(color: Colors.black.withOpacity(0.2)),
+
+          // Bottom content with colored background
+          SafeArea(
+            child: Column(
+              children: [
+                const Spacer(), // push everything to bottom
+
+                // Bottom container for title, description, button
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Discover Garden Activities 🌿",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // title in black
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Learn gardening tips, flower arrangements, and join our community.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black, // description in black
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FinalOnboardingScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:  const Color.fromARGB(255, 222, 136, 165),
+                          minimumSize: const Size(180, 50),
+                        ),
+                        child: const Text("Next"),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

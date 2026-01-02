@@ -1,9 +1,29 @@
-import 'package:flower_blossom/app/app.dart';
-import 'package:flower_blossom/core/services/hive/hive_service.dart';
+import 'package:flower_blossom/features/auth/presentation/pages/login_screen.dart';
+import 'package:flower_blossom/features/splash/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await HiveService().init();
-  runApp(const ProviderScope(child: MyApp()));
+
+import 'features/onboarding/onboarding_flow.dart';
+
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
+      initialRoute: '/',
+
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/onboarding': (context) => const OnboardingFlow(),
+        '/login': (context) => const LoginScreen(),
+      },
+    );
+  }
 }

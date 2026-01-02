@@ -16,7 +16,7 @@ class SecondScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Image.asset(
-              "assets/images/flower_bouquet.jpg",
+              "assets/images/picture1.png",
               height: 450,
               fit: BoxFit.contain,
             ),
