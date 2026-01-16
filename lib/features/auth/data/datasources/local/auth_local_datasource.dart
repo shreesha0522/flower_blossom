@@ -1,24 +1,31 @@
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flower_blossom/core/services/hive/hive_service.dart';
 import 'package:flower_blossom/features/auth/data/datasources/auth_datsource.dart';
 import 'package:flower_blossom/features/auth/data/models/auth_hive_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final authLocalDatasourceProvider = Provider<IAuthDatasource>((ref) {
+
+final authLocalDatasourceProvider = Provider<IAuthLocalDatasource>((ref) {
   final hiveService = ref.watch(hiveServiceProvider);
   return AuthLocalDatasource(hiveService: hiveService);
 });
 
-class AuthLocalDatasource implements IAuthDatasource {
+class AuthLocalDatasource implements IAuthLocalDatasource {
   final HiveService _hiveService;
 
   AuthLocalDatasource({required HiveService hiveService})
-    : _hiveService = hiveService;
+      : _hiveService = hiveService;
 
   @override
-  Future<AuthHiveModel?> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
+  Future<AuthHiveModel?> getCurrentUser() async {
+    try {
+      // Example: fetch current user by stored session ID
+      // You can extend HiveService to manage session keys
+      final currentUser = await _hiveService.getCurrentUser("current_user");
+      return currentUser;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -48,5 +55,29 @@ class AuthLocalDatasource implements IAuthDatasource {
     } catch (e) {
       return false;
     }
+  }
+  
+  @override
+  Future<bool> deleteUser(String userId) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+  
+  @override
+  getUserByEmail(String email) {
+    // TODO: implement getUserByEmail
+    throw UnimplementedError();
+  }
+  
+  @override
+  getUserById(String userId) {
+    // TODO: implement getUserById
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<bool> updateUser(user) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
   }
 }
