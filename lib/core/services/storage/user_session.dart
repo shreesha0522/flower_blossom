@@ -3,10 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //Note: Provider for shared preference
 final sharedPreferenceProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError(
-    "Shared pref main.dart bata implement garne ho. Timi dukha basa ma dinxu",
-  );
-});
+  throw StateError('SharedPreferences not initialized. Call initializeApp() first.');});
+
 
 //Note: Provider for user Session service
 final userSessionServiceProvider = Provider<UserSessionService>((ref) {

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/core/utils/user_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'login_screen.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class SignUpPage extends ConsumerStatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController emailController = TextEditingController();
@@ -179,7 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           Navigator.pushReplacement(
                             // ignore: use_build_context_synchronously
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
                           );
                         });
                       }
