@@ -56,7 +56,7 @@ class FinalOnboardingScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                            MaterialPageRoute(builder: (context) => LoginPage()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
