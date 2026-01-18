@@ -14,7 +14,7 @@ import 'core/services/storage/user_session.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  print('🔥 TRENDORA APP STARTED 🔥');
+  print('🔥 FLOWER BLOSSOM APP STARTED 🔥');
   
   // Initialize Hive
   print('📦 Initializing Hive...');
