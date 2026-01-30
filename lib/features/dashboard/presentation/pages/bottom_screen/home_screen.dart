@@ -2,8 +2,6 @@ import 'package:flower_blossom/features/cart/presentation/cart_item.dart';
 import 'package:flower_blossom/core/widgets/flower_detail_screen.dart';
 import 'package:flutter/material.dart';
 
-
-
 class HomeScreen extends StatefulWidget {
   final Function(CartItem) onAddToCart;
 
@@ -12,7 +10,6 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-
 
 class _HomeScreenState extends State<HomeScreen> {
   String searchQuery = '';
@@ -43,6 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions for responsive design
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide >= 600;
+    
     // Helper widget for each horizontal section
     Widget horizontalSection(
         String title, List<String> images, List<String> names, List<double> prices) {
@@ -65,14 +66,17 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: EdgeInsets.symmetric(vertical: isTablet ? 12.0 : 8.0),
             child: Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: isTablet ? 28 : 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SizedBox(
-            height: 200,
+            height: isTablet ? 280 : 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: filteredData.length,
@@ -84,32 +88,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => FlowerDetailScreen(
-      flowerName: flowerName,
-      flowerImage: flower,
-      description: "$flowerName is a beautiful flower.",
-      price: flowerPrice,
-      onAddToCart: widget.onAddToCart,
-     ),
-      // Pass the callback here
-                          
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FlowerDetailScreen(
+                          flowerName: flowerName,
+                          flowerImage: flower,
+                          description: "$flowerName is a beautiful flower.",
+                          price: flowerPrice,
+                          onAddToCart: widget.onAddToCart,
                         ),
-                      
+                      ),
                     );
                   },
                   child: Container(
-                    width: 150,
-                    margin: const EdgeInsets.only(right: 12),
+                    width: isTablet ? 220 : 150,
+                    margin: EdgeInsets.only(right: isTablet ? 16 : 12),
                     child: Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(isTablet ? 20 : 16),
                           child: Image.asset(
                             flower,
-                            width: 150,
-                            height: 200,
+                            width: isTablet ? 220 : 150,
+                            height: isTablet ? 280 : 200,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -118,22 +119,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           left: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 8),
+                            padding: EdgeInsets.symmetric(
+                              vertical: isTablet ? 10 : 6,
+                              horizontal: isTablet ? 12 : 8,
+                            ),
                             decoration: BoxDecoration(
-                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.5),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(16),
-                                bottomRight: Radius.circular(16),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(isTablet ? 20 : 16),
+                                bottomRight: Radius.circular(isTablet ? 20 : 16),
                               ),
                             ),
                             child: Text(
                               flowerName,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: isTablet ? 18 : 14,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -154,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFFCE4EC),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(isTablet ? 24 : 16),
           child: Column(
             children: [
               // Search bar
@@ -164,18 +166,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     searchQuery = value;
                   });
                 },
+                style: TextStyle(fontSize: isTablet ? 18 : 14),
                 decoration: InputDecoration(
                   hintText: 'Search flowers...',
-                  prefixIcon: const Icon(Icons.search),
+                  hintStyle: TextStyle(fontSize: isTablet ? 18 : 14),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: isTablet ? 28 : 24,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 20 : 16,
+                    vertical: isTablet ? 18 : 14,
+                  ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
                     borderSide: BorderSide.none,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isTablet ? 24 : 16),
 
               // Vertical list of horizontal sections
               Expanded(
@@ -206,4 +217,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

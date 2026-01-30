@@ -43,66 +43,91 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  Widget cartItemTile(CartItem item, int index) {
+  Widget cartItemTile(CartItem item, int index, bool isTablet) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: isTablet ? 24 : 12,
+        vertical: isTablet ? 12 : 8,
+      ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: EdgeInsets.all(isTablet ? 16.0 : 12.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(isTablet ? 12 : 8),
               child: Image.asset(
                 item.image,
-                width: 70,
-                height: 70,
+                width: isTablet ? 100 : 70,
+                height: isTablet ? 100 : 70,
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: isTablet ? 16 : 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: isTablet ? 26 : 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text("Rs ${item.price.toStringAsFixed(0)} per flower"),
+                  SizedBox(height: isTablet ? 6 : 4),
+                  Text(
+                    "Rs ${item.price.toStringAsFixed(0)} per flower",
+                    style: TextStyle(fontSize: isTablet ? 16 : 14),
+                  ),
                   if (item.isBouquet)
-                    const Text(
+                    Text(
                       "+ Bouquet Rs 1400",
                       style: TextStyle(
-                          color: Colors.black87, fontWeight: FontWeight.bold),
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isTablet ? 16 : 14,
+                      ),
                     ),
-                  const SizedBox(height: 4),
-                  Text("Total: Rs ${item.totalPrice.toStringAsFixed(0)}",
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: isTablet ? 6 : 4),
+                  Text(
+                    "Total: Rs ${item.totalPrice.toStringAsFixed(0)}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: isTablet ? 18 : 16,
+                    ),
+                  ),
                 ],
               ),
             ),
             Column(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    size: isTablet ? 32 : 24,
+                  ),
                   onPressed: () {
                     setState(() {
                       item.quantity++;
                     });
                   },
                 ),
-                Text(item.quantity.toString(),
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  item.quantity.toString(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isTablet ? 18 : 16,
+                  ),
+                ),
                 IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
+                  icon: Icon(
+                    Icons.remove_circle_outline,
+                    size: isTablet ? 32 : 24,
+                  ),
                   onPressed: item.quantity > 1
                       ? () {
                           setState(() {
@@ -112,7 +137,11 @@ class _CartScreenState extends State<CartScreen> {
                       : null,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: isTablet ? 32 : 24,
+                  ),
                   onPressed: () {
                     setState(() {
                       widget.cartItems.removeAt(index);
@@ -130,35 +159,48 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions for responsive design
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide >= 600;
+    
     return Scaffold(
       backgroundColor: const Color(0xFFFCE4EC),
-      // ✅ Remove AppBar entirely
       body: widget.cartItems.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
                 "Your cart is empty",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: isTablet ? 24 : 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.only(bottom: isTablet ? 24 : 16),
               itemCount: widget.cartItems.length,
               itemBuilder: (context, index) =>
-                  cartItemTile(widget.cartItems[index], index),
+                  cartItemTile(widget.cartItems[index], index, isTablet),
             ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: isTablet ? 24 : 16,
+          vertical: isTablet ? 16 : 12,
+        ),
         color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "Grand Total: Rs ${grandTotal.toStringAsFixed(0)}",
-              style: const TextStyle(
-                  fontSize: 18,
+            Flexible(
+              child: Text(
+                "Grand Total: Rs ${grandTotal.toStringAsFixed(0)}",
+                style: TextStyle(
+                  fontSize: isTablet ? 22 : 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87),
+                  color: Colors.black87,
+                ),
+              ),
             ),
+            SizedBox(width: isTablet ? 16 : 8),
             ElevatedButton(
               onPressed: widget.cartItems.isEmpty
                   ? null
@@ -168,21 +210,23 @@ class _CartScreenState extends State<CartScreen> {
                         MaterialPageRoute(
                           builder: (_) => CheckoutScreen(
                             cartItems: widget.cartItems,
-                            userName: "YourUserName", // Replace with actual user name
-                            userLocation: "YourUserLocation", // Replace with actual user location
+                            userName: "YourUserName",
+                            userLocation: "YourUserLocation",
                           ),
                         ),
                       );
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 229, 128, 162),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isTablet ? 32 : 24,
+                  vertical: isTablet ? 16 : 12,
+                ),
               ),
-              child: const Text(
+              child: Text(
                 "Checkout",
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: isTablet ? 20 : 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),

@@ -1,12 +1,9 @@
-
-
 import 'package:flower_blossom/core/api/api_client.dart';
 import 'package:flower_blossom/core/api/api_endpoint.dart';
 import 'package:flower_blossom/core/services/storage/user_session.dart';
 import 'package:flower_blossom/features/auth/data/datasources/auth_datsource.dart';
 import 'package:flower_blossom/features/auth/data/models/auth_api_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 final authRemoteDatasourceProvider = Provider<IAuthRemoteDatasource>((ref) {
   final apiClient = ref.read(apiClientProvider);
@@ -24,8 +21,8 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
   AuthRemoteDatasource({
     required ApiClient apiClient,
     required UserSessionService userSessionService,
-  }) : _apiClient = apiClient,
-       _userSessionService = userSessionService;
+  })  : _apiClient = apiClient,
+        _userSessionService = userSessionService;
 
   @override
   Future<AuthApiModel?> login(String email, String password) async {
@@ -37,6 +34,7 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
     if (response.data["success"] == true) {
       final data = response.data["data"] as Map<String, dynamic>;
       final user = AuthApiModel.fromJson(data);
+
       // info: Save user session
       await _userSessionService.saveUserSession(
         userId: user.authId!,
@@ -44,6 +42,7 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
         username: user.username,
         fullName: user.fullName,
       );
+
       return user;
     }
     return null;
@@ -58,10 +57,9 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
 
     if (response.data["success"] == true) {
       final data = response.data["data"] as Map<String, dynamic>;
-      final resistedUser = AuthApiModel.fromJson(data);
-      return resistedUser;
+      final registeredUser = AuthApiModel.fromJson(data);
+      return registeredUser;
     }
-
     return user;
   }
 

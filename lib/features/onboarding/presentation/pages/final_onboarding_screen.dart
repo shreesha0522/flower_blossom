@@ -1,12 +1,15 @@
 import 'package:flower_blossom/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
 
-
 class FinalOnboardingScreen extends StatelessWidget {
   const FinalOnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions for responsive design
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide >= 600;
+    
     return Scaffold(
       body: Stack(
         children: [
@@ -17,41 +20,37 @@ class FinalOnboardingScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-
           // Optional overlay for readability
           Container(color: Colors.black.withOpacity(0.2)),
-
           // Bottom content with colored background
           SafeArea(
             child: Column(
               children: [
                 const Spacer(), // push content to bottom
-
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  // bottom color
+                  padding: EdgeInsets.all(isTablet ? 48 : 24),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         "Get Started With Blossom 🌸",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: isTablet ? 42 : 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black, // title in black
+                          color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: isTablet ? 20 : 12),
+                      Text(
                         "Explore activities, delivery, and join our flower-loving community.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black, // description in black
+                          fontSize: isTablet ? 22 : 16,
+                          color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: isTablet ? 32 : 20),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pushReplacement(
@@ -61,7 +60,13 @@ class FinalOnboardingScreen extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 222, 136, 165),
-                          minimumSize: const Size(180, 50),
+                          minimumSize: Size(
+                            isTablet ? 280 : 180,
+                            isTablet ? 60 : 50,
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: isTablet ? 20 : 16,
+                          ),
                         ),
                         child: const Text("Start Exploring"),
                       ),
@@ -75,5 +80,4 @@ class FinalOnboardingScreen extends StatelessWidget {
       ),
     );
   }
-  
 }

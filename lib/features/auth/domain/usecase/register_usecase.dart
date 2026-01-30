@@ -1,7 +1,6 @@
 // lib/features/auth/domain/usecases/register_usecase.dart
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-
 import 'package:flower_blossom/core/error/failures.dart';
 import 'package:flower_blossom/core/services/usecases/app_usecases.dart';
 import 'package:flower_blossom/features/auth/data/repositories/auth_repository.dart';
@@ -15,22 +14,24 @@ final registerUsecaseProvider = Provider<RegisterUsecase>((ref) {
   return RegisterUsecase(authRepository: authRepository);
 });
 
-/// Parameters for register use case
+/// Parameters for register use case - ✅ UPDATED to match backend
 class RegisterUsecaseParams extends Equatable {
   final String fullName;
   final String email;
   final String username;
   final String password;
+  final String confirmPassword;
 
   const RegisterUsecaseParams({
     required this.fullName,
     required this.email,
     required this.username,
-    required this.password, required String phoneNumber, String? address,
+    required this.password,
+    required this.confirmPassword,
   });
 
   @override
-  List<Object?> get props => [fullName, email, username, password];
+  List<Object?> get props => [fullName, email, username, password, confirmPassword];
 }
 
 /// Register use case implementation
@@ -48,7 +49,9 @@ class RegisterUsecase
       email: params.email,
       username: params.username,
       password: params.password,
+      confirmPassword: params.confirmPassword,
     );
+
     return _authRepository.register(entity);
   }
 }
