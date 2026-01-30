@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/core/utils/user_storage.dart';
 import 'package:flower_blossom/core/services/upload_service.dart';
+import 'package:flower_blossom/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -39,6 +40,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    
+    // 👇 DEBUG LINES - CHECK CONSOLE OUTPUT
+    final authState = ref.read(authViewModelProvider);
+    print("==================== DEBUG START ====================");
+    print("🔍 Logged in user fullName: ${authState.entity?.fullName}");
+    print("🔍 Logged in user username: ${authState.entity?.username}");
+    print("🔍 Logged in user email: ${authState.entity?.email}");
+    print("🔍 Logged in user ID: ${authState.entity?.authId}");
+    print("---");
+    print("📦 Widget fullName parameter: ${widget.fullName}");
+    print("📦 Widget username parameter: ${widget.username}");
+    print("📦 Widget email parameter: ${widget.email}");
+    print("==================== DEBUG END ====================");
+    // 👆 END DEBUG LINES
+    
     fullNameController = TextEditingController(text: widget.fullName);
     usernameController = TextEditingController(text: widget.username);
     emailController = TextEditingController(text: widget.email);
@@ -49,9 +65,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    // TODO: Get userId from your auth system
-    // For now, using a placeholder - you need to replace this with actual userId
-    final userId = "YOUR_USER_ID_HERE"; // Replace with actual user ID
+    // Get userId from auth state
+    final authState = ref.read(authViewModelProvider);
+    final userId = authState.entity?.authId ?? "";
+    
+    if (userId.isEmpty) {
+      print("❌ No user logged in");
+      return;
+    }
+    
+    print("📸 Loading profile image for userId: $userId");
     
     try {
       final uploadService = ref.read(uploadServiceProvider);
@@ -60,9 +83,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         setState(() {
           _profileImageUrl = imageUrl;
         });
+        print("✅ Profile image loaded: $imageUrl");
+      } else {
+        print("ℹ️ No profile image found for this user");
       }
     } catch (e) {
-      print("Error loading profile image: $e");
+      print("❌ Error loading profile image: $e");
     }
   }
 
@@ -151,8 +177,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     });
 
     try {
-      // TODO: Get userId from your auth system
-      final userId = "YOUR_USER_ID_HERE"; // Replace with actual user ID
+      // Get userId from auth state
+      final authState = ref.read(authViewModelProvider);
+      final userId = authState.entity?.authId ?? "";
+      
+      print("📤 Attempting to upload image for userId: $userId");
+      
+      if (userId.isEmpty) {
+        showCenterMessage("User not logged in", color: Colors.red.shade300);
+        setState(() {
+          isUploading = false;
+        });
+        return;
+      }
       
       final uploadService = ref.read(uploadServiceProvider);
       final result = await uploadService.uploadProfileImage(
@@ -162,6 +199,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           print("Upload progress: ${(sent / total * 100).toStringAsFixed(0)}%");
         },
       );
+
+      print("📥 Upload result: $result");
 
       if (result['success'] == true) {
         setState(() {
@@ -173,6 +212,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           "Profile picture updated successfully!",
           color: const Color.fromARGB(255, 229, 128, 162),
         );
+        print("✅ Image uploaded successfully: $_profileImageUrl");
       }
     } catch (e) {
       setState(() {
@@ -183,6 +223,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         "Failed to upload image: $e",
         color: Colors.red.shade300,
       );
+      print("❌ Upload error: $e");
     }
   }
 
