@@ -1,3 +1,7 @@
+import 'package:flower_blossom/app/app_routes.dart';
+import 'package:flower_blossom/core/utils/snack_bar_utils.dart';
+import 'package:flower_blossom/features/auth/presentation/state/auth_state.dart';
+import 'package:flower_blossom/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/features/auth/presentation/pages/signup_screen.dart';
 import 'package:flower_blossom/features/dashboard/presentation/pages/dashboard_screen.dart';
@@ -12,6 +16,15 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      await ref.read(authViewModelProvider.notifier).login(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
+    }
+  }
+  
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -48,16 +61,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions for responsive design
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.shortestSide >= 600;
+    
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated) {
+        AppRoutes.pushReplacement(context, DashboardScreen());
+      } else if (next.status == AuthStatus.error &&
+          next.errorMessage != null) {
+        SnackbarUtils.showError(context, next.errorMessage!);
+      }
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFFFCE4EC),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.all(isTablet ? 48 : 24),
+            margin: EdgeInsets.symmetric(horizontal: isTablet ? 48 : 24),
+            constraints: BoxConstraints(
+              maxWidth: isTablet ? 600 : double.infinity,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(isTablet ? 24 : 16),
               boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
             ),
             child: Form(
@@ -68,17 +97,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   // 🌸 Logo
                   Image.asset(
                     'assets/images/Picture1.png',
-                    height: 100,
+                    height: isTablet ? 150 : 100,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: isTablet ? 32 : 24),
 
                   // Email
                   TextFormField(
                     controller: emailController,
-                    decoration: const InputDecoration(
+                    style: TextStyle(fontSize: isTablet ? 18 : 14),
+                    decoration: InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email, color: Color.fromARGB(255, 229, 128, 162)),
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: const Color.fromARGB(255, 229, 128, 162),
+                        size: isTablet ? 28 : 24,
+                      ),
+                      border: const OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 20 : 16,
+                        vertical: isTablet ? 20 : 16,
+                      ),
                     ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
@@ -90,16 +129,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: isTablet ? 24 : 16),
 
                   // Password
                   TextFormField(
                     controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
+                    style: TextStyle(fontSize: isTablet ? 18 : 14),
+                    decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock, color: Color.fromARGB(255, 229, 128, 162)),
-                      border: OutlineInputBorder(),
+                      labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: const Color.fromARGB(255, 229, 128, 162),
+                        size: isTablet ? 28 : 24,
+                      ),
+                      border: const OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 20 : 16,
+                        vertical: isTablet ? 20 : 16,
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'Please enter your password';
@@ -107,54 +156,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: isTablet ? 32 : 24),
 
                   // Login button
                   ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final email = emailController.text.trim();
-                        final password = passwordController.text.trim();
-                        final user = UserStorage.loginUser(email, password);
-
-                        if (user != null) {
-                          // ✅ Successful login → show center message
-                          showCenterMessage('Login successful!', color: const Color.fromARGB(255, 229, 128, 162));
-
-                          // Navigate to Dashboard after 2 seconds
-                          Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.pushReplacement(
-                              // ignore: use_build_context_synchronously
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DashboardScreen(
-                                  firstName: user.firstName,
-                                  lastName: user.lastName,
-                                  email: user.email,
-                                  address: user.address,
-                                ),
-                              ),
-                            );
-                          });
-                        } else {
-                          // ❌ Invalid credentials → show center message
-                          showCenterMessage('Please sign up first', color: const Color.fromARGB(255, 229, 128, 162));
-                        }
-                      }
-                    },
+                    onPressed: _handleLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 229, 128, 162),
                       foregroundColor: Colors.black,
-
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      minimumSize: Size(
+                        double.infinity,
+                        isTablet ? 60 : 48,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      textStyle: TextStyle(
+                        fontSize: isTablet ? 18 : 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     child: const Text(
                       'Login',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: isTablet ? 24 : 16),
 
                   // Sign up redirect
                   TextButton(
@@ -164,9 +191,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         MaterialPageRoute(builder: (context) => const SignUpPage()),
                       );
                     },
-                    child: const Text(
-                      "Don’t have an account? Sign up",
-                      style: TextStyle(color: Color.fromARGB(255, 26, 26, 26)),
+                    child: Text(
+                      "Don't have an account? Sign up",
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 26, 26, 26),
+                        fontSize: isTablet ? 16 : 14,
+                      ),
                     ),
                   ),
                 ],

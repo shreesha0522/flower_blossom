@@ -5,7 +5,6 @@ import 'package:flower_blossom/features/auth/domain/usecase/register_usecase.dar
 import 'package:flower_blossom/features/auth/presentation/state/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 /// Riverpod provider for AuthViewModel
 final authViewModelProvider =
     NotifierProvider<AuthViewModel, AuthState>(() => AuthViewModel());
@@ -25,14 +24,13 @@ class AuthViewModel extends Notifier<AuthState> {
     return AuthState.initial();
   }
 
-  /// Register new user
+  /// Register new user - ✅ UPDATED to match backend requirements
   Future<void> register({
     required String fullName,
     required String username,
     required String email,
     required String password,
-    required String phoneNumber,
-    required String? address,
+    required String confirmPassword,
   }) async {
     state = AuthState.loading();
 
@@ -41,8 +39,7 @@ class AuthViewModel extends Notifier<AuthState> {
       username: username,
       email: email,
       password: password,
-      phoneNumber: phoneNumber,
-      address: address,
+      confirmPassword: confirmPassword,
     );
 
     final result = await _registerUsecase(params);
@@ -65,7 +62,6 @@ class AuthViewModel extends Notifier<AuthState> {
     final params = LoginUsecaseParams(
       email: email,
       password: password,
-
     );
 
     final result = await _loginUsecase(params);

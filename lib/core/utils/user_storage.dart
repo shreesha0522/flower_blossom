@@ -1,17 +1,14 @@
 // user_storage.dart
-
 class User {
-  final String firstName;
-  final String lastName;
+  final String fullName;
+  final String username;
   final String email;
-  final String address;
   final String password;
 
   User({
-    required this.firstName,
-    required this.lastName,
+    required this.fullName,
+    required this.username,
     required this.email,
-    required this.address,
     required this.password,
   });
 }
@@ -21,17 +18,15 @@ class UserStorage {
 
   // ✅ Register a user with all information
   static void register({
-    required String firstName,
-    required String lastName,
+    required String fullName,
+    required String username,
     required String email,
-    required String address,
     required String password,
   }) {
     _user = User(
-      firstName: firstName,
-      lastName: lastName,
+      fullName: fullName,
+      username: username,
       email: email,
-      address: address,
       password: password,
     );
   }
@@ -44,9 +39,19 @@ class UserStorage {
     return null;
   }
 
-  // ✅ Getter methods for easy access (optional)
-  static String? get firstName => _user?.firstName;
-  static String? get lastName => _user?.lastName;
+  // ✅ Get current logged-in user
+  static User? getCurrentUser() {
+    return _user;
+  }
+
+  // ✅ Clear user data (logout)
+  static void clearUser() {
+    _user = null;
+  }
+
+  // ✅ Getter methods for easy access
+  static String? get fullName => _user?.fullName;
+  static String? get username => _user?.username;
   static String? get email => _user?.email;
-  static String? get address => _user?.address;
+  static String? get password => _user?.password;
 }

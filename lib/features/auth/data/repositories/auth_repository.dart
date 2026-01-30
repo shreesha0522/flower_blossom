@@ -1,4 +1,4 @@
- import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flower_blossom/core/error/failures.dart';
@@ -11,7 +11,6 @@ import 'package:flower_blossom/features/auth/data/models/auth_hive_model.dart';
 import 'package:flower_blossom/features/auth/domain/entities/auth_entity.dart';
 import 'package:flower_blossom/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   final authLocalDatasource = ref.watch(authLocalDatasourceProvider);
@@ -29,15 +28,13 @@ class AuthRepository implements IAuthRepository {
   final IAuthRemoteDatasource _authRemoteDatasource;
   final INetworkInfo _networkInfo;
 
-
   AuthRepository({
     required IAuthLocalDatasource authLocalDatasource,
     required IAuthRemoteDatasource authRemoteDatasource,
     required INetworkInfo networkInfo,
-
-  }) : _authLocalDatasource = authLocalDatasource,
-       _authRemoteDatasource = authRemoteDatasource,
-       _networkInfo = networkInfo;
+  })  : _authLocalDatasource = authLocalDatasource,
+        _authRemoteDatasource = authRemoteDatasource,
+        _networkInfo = networkInfo;
 
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser() {

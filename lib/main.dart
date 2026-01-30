@@ -1,19 +1,16 @@
 import 'package:flower_blossom/features/auth/presentation/pages/login_screen.dart';
 import 'package:flower_blossom/features/onboarding/onboarding_flow.dart';
+import 'package:flower_blossom/features/dashboard/presentation/pages/dashboard_screen.dart'; // ← ADDED THIS
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 // Import your screens
 import 'features/splash/presentation/pages/splash_screen.dart';
-
-
 import 'core/services/storage/user_session.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   print('🔥 FLOWER BLOSSOM APP STARTED 🔥');
   
   // Initialize Hive
@@ -44,8 +41,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/': (context) => SplashScreen(),
-        '/onboarding': (context) => OnboardingFlow(), // ← Points to your flow controller
+        '/onboarding': (context) => OnboardingFlow(),
         '/login': (context) => LoginPage(),
+        '/dashboard': (context) => DashboardScreen(), // ← ADDED THIS
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -53,6 +51,8 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => OnboardingFlow());
           case '/login':
             return MaterialPageRoute(builder: (context) => LoginPage());
+          case '/dashboard':
+            return MaterialPageRoute(builder: (context) => DashboardScreen()); // ← ADDED THIS
           default:
             return MaterialPageRoute(
               builder: (context) => Scaffold(

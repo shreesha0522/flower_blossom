@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flower_blossom/features/cart/presentation/cart_item.dart';
+import 'package:flower_blossom/features/dashboard/presentation/pages/dashboard_screen.dart'; // ← ADDED THIS
 import 'payment_screen.dart'; // Import your payment screen
 
 class CheckoutScreen extends StatefulWidget {
@@ -29,48 +30,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   double get grandTotal => itemsTotal + deliveryCharge;
 
-  void showOrderSuccess() {
-    showDialog(
-      context: context,
-      builder: (context) => Center(
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.pink.shade200,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_circle, color: Colors.black, size: 60),
-                const SizedBox(height: 12),
-                const Text(
-                  "Order Placed Successfully!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .popUntil((route) => route.isFirst); // back to home
-                  },
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+  void navigateToDashboard() {
+    // Navigate directly to dashboard after payment and clear all previous routes
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => DashboardScreen()),
+      (route) => false,
     );
   }
 
@@ -103,10 +68,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         MaterialPageRoute(
           builder: (_) => PaymentScreen(
             amount: grandTotal,
-            onPaymentSuccess: () {
-              showOrderSuccess();
-              Navigator.pop(context); // Close payment screen
-            },
+            onPaymentSuccess: navigateToDashboard,
           ),
         ),
       );
