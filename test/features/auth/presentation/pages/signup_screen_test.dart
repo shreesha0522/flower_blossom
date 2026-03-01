@@ -5,7 +5,7 @@ import 'package:flower_blossom/features/auth/presentation/pages/signup_screen.da
 
 void main() {
   group('SignUpPage Widget Tests', () {
-    
+
     // Test 1: Widget renders with all required UI elements
     testWidgets('should display all signup UI elements', (tester) async {
       // Arrange & Act
@@ -17,13 +17,13 @@ void main() {
         ),
       );
 
-      // Wait for the widget to fully render
       await tester.pumpAndSettle();
 
       // Assert - Check all widgets are present
-      expect(find.byType(Image), findsOneWidget); // Logo
-      expect(find.byType(TextFormField), findsNWidgets(5)); // All 5 fields
-      expect(find.text('Full Name'), findsOneWidget);
+      expect(find.byType(Image), findsOneWidget);
+      expect(find.byType(TextFormField), findsNWidgets(6)); // 6 fields now
+      expect(find.text('First Name'), findsOneWidget);
+      expect(find.text('Last Name'), findsOneWidget);
       expect(find.text('Username'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
@@ -31,13 +31,14 @@ void main() {
       expect(find.text('Already have an account? Login'), findsOneWidget);
       expect(find.byIcon(Icons.person), findsOneWidget);
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
+      expect(find.byIcon(Icons.alternate_email), findsOneWidget);
       expect(find.byIcon(Icons.email), findsOneWidget);
       expect(find.byIcon(Icons.lock), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline), findsOneWidget);
     });
 
-    // Test 2: Full Name validation - empty shows error
-    testWidgets('should show error when full name is empty', (tester) async {
+    // Test 2: First Name validation - empty shows error
+    testWidgets('should show error when first name is empty', (tester) async {
       // Arrange
       await tester.pumpWidget(
         const ProviderScope(
@@ -49,23 +50,24 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Act - Scroll to bottom to find signup button
+      // Scroll to bottom to find signup button
       await tester.dragUntilVisible(
         find.widgetWithText(ElevatedButton, 'Sign Up'),
         find.byType(SingleChildScrollView),
         const Offset(0, -50),
       );
 
-      // Tap signup without entering full name
+      // Tap signup without entering first name
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
       await tester.pumpAndSettle();
 
       // Assert
-      expect(find.text('Please enter your full name'), findsOneWidget);
+      expect(find.text('Please enter your first name'), findsOneWidget);
     });
 
     // Test 3: Username validation - too short shows error
-    testWidgets('should show error when username is less than 3 characters', (tester) async {
+    testWidgets('should show error when username is less than 3 characters',
+        (tester) async {
       // Arrange
       await tester.pumpWidget(
         const ProviderScope(
@@ -77,28 +79,31 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Act - Find fields by their label text
-      final fullNameField = find.ancestor(
-        of: find.text('Full Name'),
+      final firstNameField = find.ancestor(
+        of: find.text('First Name'),
         matching: find.byType(TextFormField),
       );
-      
+
+      final lastNameField = find.ancestor(
+        of: find.text('Last Name'),
+        matching: find.byType(TextFormField),
+      );
+
       final usernameField = find.ancestor(
         of: find.text('Username'),
         matching: find.byType(TextFormField),
       );
 
-      // Enter data
-      await tester.enterText(fullNameField, 'John Doe');
+      await tester.enterText(firstNameField, 'John');
+      await tester.enterText(lastNameField, 'Doe');
       await tester.enterText(usernameField, 'ab'); // Only 2 chars
 
-      // Scroll to signup button
       await tester.dragUntilVisible(
         find.widgetWithText(ElevatedButton, 'Sign Up'),
         find.byType(SingleChildScrollView),
         const Offset(0, -50),
       );
-      
+
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
       await tester.pumpAndSettle();
 
@@ -119,34 +124,37 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Act - Find fields by label
-      final fullNameField = find.ancestor(
-        of: find.text('Full Name'),
+      final firstNameField = find.ancestor(
+        of: find.text('First Name'),
         matching: find.byType(TextFormField),
       );
-      
+
+      final lastNameField = find.ancestor(
+        of: find.text('Last Name'),
+        matching: find.byType(TextFormField),
+      );
+
       final usernameField = find.ancestor(
         of: find.text('Username'),
         matching: find.byType(TextFormField),
       );
-      
+
       final emailField = find.ancestor(
         of: find.text('Email'),
         matching: find.byType(TextFormField),
       );
 
-      // Enter data
-      await tester.enterText(fullNameField, 'John Doe');
+      await tester.enterText(firstNameField, 'John');
+      await tester.enterText(lastNameField, 'Doe');
       await tester.enterText(usernameField, 'johndoe');
       await tester.enterText(emailField, 'invalidemail'); // Invalid email
 
-      // Scroll to signup button
       await tester.dragUntilVisible(
         find.widgetWithText(ElevatedButton, 'Sign Up'),
         find.byType(SingleChildScrollView),
         const Offset(0, -50),
       );
-      
+
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
       await tester.pumpAndSettle();
 
@@ -167,46 +175,49 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Act - Find fields by label
-      final fullNameField = find.ancestor(
-        of: find.text('Full Name'),
+      final firstNameField = find.ancestor(
+        of: find.text('First Name'),
         matching: find.byType(TextFormField),
       );
-      
+
+      final lastNameField = find.ancestor(
+        of: find.text('Last Name'),
+        matching: find.byType(TextFormField),
+      );
+
       final usernameField = find.ancestor(
         of: find.text('Username'),
         matching: find.byType(TextFormField),
       );
-      
+
       final emailField = find.ancestor(
         of: find.text('Email'),
         matching: find.byType(TextFormField),
       );
-      
+
       final passwordField = find.ancestor(
         of: find.text('Password'),
         matching: find.byType(TextFormField),
       );
-      
+
       final confirmPasswordField = find.ancestor(
         of: find.text('Confirm Password'),
         matching: find.byType(TextFormField),
       );
 
-      // Enter data
-      await tester.enterText(fullNameField, 'John Doe');
+      await tester.enterText(firstNameField, 'John');
+      await tester.enterText(lastNameField, 'Doe');
       await tester.enterText(usernameField, 'johndoe');
       await tester.enterText(emailField, 'john@example.com');
       await tester.enterText(passwordField, 'password123');
       await tester.enterText(confirmPasswordField, 'password456'); // Different
 
-      // Scroll to signup button
       await tester.dragUntilVisible(
         find.widgetWithText(ElevatedButton, 'Sign Up'),
         find.byType(SingleChildScrollView),
         const Offset(0, -50),
       );
-      
+
       await tester.tap(find.widgetWithText(ElevatedButton, 'Sign Up'));
       await tester.pumpAndSettle();
 

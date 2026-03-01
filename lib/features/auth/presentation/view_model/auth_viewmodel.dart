@@ -24,9 +24,10 @@ class AuthViewModel extends Notifier<AuthState> {
     return AuthState.initial();
   }
 
-  /// Register new user - ✅ UPDATED to match backend requirements
+  /// Register new user
   Future<void> register({
-    required String fullName,
+    required String firstName,
+    required String lastName,
     required String username,
     required String email,
     required String password,
@@ -35,7 +36,8 @@ class AuthViewModel extends Notifier<AuthState> {
     state = AuthState.loading();
 
     final params = RegisterUsecaseParams(
-      fullName: fullName,
+      firstName: firstName,
+      lastName: lastName,
       username: username,
       email: email,
       password: password,
@@ -43,12 +45,9 @@ class AuthViewModel extends Notifier<AuthState> {
     );
 
     final result = await _registerUsecase(params);
-
     result.fold(
       (failure) => state = AuthState.error(failure.message),
-      (_) => state = AuthState.registered(
-        "Registration successful",
-      ),
+      (_) => state = AuthState.registered("Registration successful"),
     );
   }
 
@@ -65,7 +64,6 @@ class AuthViewModel extends Notifier<AuthState> {
     );
 
     final result = await _loginUsecase(params);
-
     result.fold(
       (failure) => state = AuthState.error(failure.message),
       (entity) => state = AuthState.authenticated(entity),
@@ -77,12 +75,9 @@ class AuthViewModel extends Notifier<AuthState> {
     state = AuthState.loading();
 
     final result = await _logoutUsecase();
-
     result.fold(
       (failure) => state = AuthState.error(failure.message),
-      (_) => state = const AuthState(
-        status: AuthStatus.unauthenticated,
-      ),
+      (_) => state = const AuthState(status: AuthStatus.unauthenticated),
     );
   }
 
@@ -91,7 +86,6 @@ class AuthViewModel extends Notifier<AuthState> {
     state = AuthState.loading();
 
     final result = await _getCurrentUserUsecase();
-
     result.fold(
       (failure) => state = AuthState.error(failure.message),
       (entity) => state = AuthState.authenticated(entity),

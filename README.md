@@ -1,16 +1,18 @@
-# flower_blossom
+# 🌸 Flower Blossom
 
-A new Flutter project.
+Flower Blossom is a cross-platform Flutter e-commerce mobile application that allows users to browse, search, and order flowers online. The app features user authentication (register/login), a product catalogue, shopping cart, and user profile management. It is built using Dart and Flutter with a clean architecture approach, utilizing Riverpod for state management, Hive for local data persistence, and a custom REST API backend for remote data storage and retrieval.
 
-## Getting Started
+## Features
+- User Registration & Login (with JWT authentication)
+- Browse & Search Flowers
+- Add to Cart & Checkout
+- User Profile Management
+- Local Data Persistence with Hive
+- Responsive UI for phones and tablets
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+- **Framework:** Flutter (Dart)
+- **State Management:** Riverpod
+- **Local Storage:** Hive, SharedPreferences
+- **Networking:** Dio
+- **Architecture:** Clean Architecture (MVVM)

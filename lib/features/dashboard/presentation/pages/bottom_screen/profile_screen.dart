@@ -7,14 +7,16 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  final String fullName;
+  final String firstName;
+  final String lastName;
   final String username;
   final String email;
   final String password;
 
   const ProfileScreen({
     super.key,
-    required this.fullName,
+    required this.firstName,
+    required this.lastName,
     required this.username,
     required this.email,
     required this.password,
@@ -25,7 +27,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  late TextEditingController fullNameController;
+  late TextEditingController firstNameController;
+  late TextEditingController lastNameController;
   late TextEditingController usernameController;
   late TextEditingController emailController;
   late TextEditingController passwordController;
@@ -40,42 +43,41 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    
-    // 👇 DEBUG LINES - CHECK CONSOLE OUTPUT
+
     final authState = ref.read(authViewModelProvider);
     print("==================== DEBUG START ====================");
-    print("🔍 Logged in user fullName: ${authState.entity?.fullName}");
+    print("🔍 Logged in user firstName: ${authState.entity?.firstName}");
+    print("🔍 Logged in user lastName: ${authState.entity?.lastName}");
     print("🔍 Logged in user username: ${authState.entity?.username}");
     print("🔍 Logged in user email: ${authState.entity?.email}");
     print("🔍 Logged in user ID: ${authState.entity?.authId}");
     print("---");
-    print("📦 Widget fullName parameter: ${widget.fullName}");
+    print("📦 Widget firstName parameter: ${widget.firstName}");
+    print("📦 Widget lastName parameter: ${widget.lastName}");
     print("📦 Widget username parameter: ${widget.username}");
     print("📦 Widget email parameter: ${widget.email}");
     print("==================== DEBUG END ====================");
-    // 👆 END DEBUG LINES
-    
-    fullNameController = TextEditingController(text: widget.fullName);
+
+    firstNameController = TextEditingController(text: widget.firstName);
+    lastNameController = TextEditingController(text: widget.lastName);
     usernameController = TextEditingController(text: widget.username);
     emailController = TextEditingController(text: widget.email);
     passwordController = TextEditingController(text: widget.password);
-    
-    // Load existing profile image if available
+
     _loadProfileImage();
   }
 
   Future<void> _loadProfileImage() async {
-    // Get userId from auth state
     final authState = ref.read(authViewModelProvider);
     final userId = authState.entity?.authId ?? "";
-    
+
     if (userId.isEmpty) {
       print("❌ No user logged in");
       return;
     }
-    
+
     print("📸 Loading profile image for userId: $userId");
-    
+
     try {
       final uploadService = ref.read(uploadServiceProvider);
       final imageUrl = await uploadService.getProfileImage(userId);
@@ -94,7 +96,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   void dispose() {
-    fullNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -132,8 +135,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     setState(() {
                       _profileImage = File(pickedFile.path);
                     });
-                    
-                    // Upload image immediately
                     await _uploadProfileImage();
                   }
                 },
@@ -156,8 +157,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     setState(() {
                       _profileImage = File(pickedFile.path);
                     });
-                    
-                    // Upload image immediately
                     await _uploadProfileImage();
                   }
                 },
@@ -177,12 +176,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     });
 
     try {
-      // Get userId from auth state
       final authState = ref.read(authViewModelProvider);
       final userId = authState.entity?.authId ?? "";
-      
+
       print("📤 Attempting to upload image for userId: $userId");
-      
+
       if (userId.isEmpty) {
         showCenterMessage("User not logged in", color: Colors.red.shade300);
         setState(() {
@@ -190,13 +188,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         });
         return;
       }
-      
+
       final uploadService = ref.read(uploadServiceProvider);
       final result = await uploadService.uploadProfileImage(
         imageFile: _profileImage!,
         userId: userId,
         onProgress: (sent, total) {
-          print("Upload progress: ${(sent / total * 100).toStringAsFixed(0)}%");
+          print(
+              "Upload progress: ${(sent / total * 100).toStringAsFixed(0)}%");
         },
       );
 
@@ -207,7 +206,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _profileImageUrl = result['data']['imageUrl'];
           isUploading = false;
         });
-        
+
         showCenterMessage(
           "Profile picture updated successfully!",
           color: const Color.fromARGB(255, 229, 128, 162),
@@ -218,7 +217,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       setState(() {
         isUploading = false;
       });
-      
+
       showCenterMessage(
         "Failed to upload image: $e",
         color: Colors.red.shade300,
@@ -257,32 +256,43 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   bool validateProfile() {
-    if (fullNameController.text.trim().isEmpty) {
-      showCenterMessage("Full name cannot be empty", color: Colors.red.shade300);
+    if (firstNameController.text.trim().isEmpty) {
+      showCenterMessage("First name cannot be empty",
+          color: Colors.red.shade300);
+      return false;
+    }
+    if (lastNameController.text.trim().isEmpty) {
+      showCenterMessage("Last name cannot be empty",
+          color: Colors.red.shade300);
       return false;
     }
     if (usernameController.text.trim().isEmpty) {
-      showCenterMessage("Username cannot be empty", color: Colors.red.shade300);
+      showCenterMessage("Username cannot be empty",
+          color: Colors.red.shade300);
       return false;
     }
     if (usernameController.text.trim().length < 3) {
-      showCenterMessage("Username must be at least 3 characters", color: Colors.red.shade300);
+      showCenterMessage("Username must be at least 3 characters",
+          color: Colors.red.shade300);
       return false;
     }
     if (emailController.text.trim().isEmpty) {
       showCenterMessage("Email cannot be empty", color: Colors.red.shade300);
       return false;
     }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}').hasMatch(emailController.text.trim())) {
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
+        .hasMatch(emailController.text.trim())) {
       showCenterMessage("Enter a valid email", color: Colors.red.shade300);
       return false;
     }
     if (passwordController.text.trim().isEmpty) {
-      showCenterMessage("Password cannot be empty", color: Colors.red.shade300);
+      showCenterMessage("Password cannot be empty",
+          color: Colors.red.shade300);
       return false;
     }
     if (passwordController.text.trim().length < 8) {
-      showCenterMessage("Password must be at least 8 characters", color: Colors.red.shade300);
+      showCenterMessage("Password must be at least 8 characters",
+          color: Colors.red.shade300);
       return false;
     }
     return true;
@@ -291,7 +301,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void _saveProfile() {
     if (validateProfile()) {
       UserStorage.register(
-        fullName: fullNameController.text.trim(),
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
         username: usernameController.text.trim(),
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
@@ -309,11 +320,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   ImageProvider _getProfileImage() {
-    // Priority: Local file > Network URL > Default asset
     if (_profileImage != null) {
       return FileImage(_profileImage!);
     } else if (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) {
-      // Construct full URL with your backend base URL
       final fullUrl = "http://10.0.2.2:8000$_profileImageUrl";
       return NetworkImage(fullUrl);
     } else {
@@ -390,9 +399,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Container(
                             padding: EdgeInsets.all(isTablet ? 10 : 8),
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 229, 128, 162),
+                              color:
+                                  const Color.fromARGB(255, 229, 128, 162),
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
+                              border:
+                                  Border.all(color: Colors.white, width: 3),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.2),
@@ -413,13 +424,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SizedBox(height: isTablet ? 40 : 32),
 
-                // Full Name
+                // First Name Field
                 TextFormField(
-                  controller: fullNameController,
+                  controller: firstNameController,
                   enabled: isEditing,
                   style: TextStyle(fontSize: isTablet ? 18 : 14),
                   decoration: InputDecoration(
-                    labelText: "Full Name",
+                    labelText: "First Name",
                     labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
                     prefixIcon: Icon(
                       Icons.person,
@@ -428,7 +439,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: isEditing ? Colors.white : Colors.grey.shade100,
+                    fillColor:
+                        isEditing ? Colors.white : Colors.grey.shade100,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: isTablet ? 20 : 16,
+                      vertical: isTablet ? 20 : 16,
+                    ),
+                  ),
+                ),
+                SizedBox(height: isTablet ? 20 : 16),
+
+                // Last Name Field
+                TextFormField(
+                  controller: lastNameController,
+                  enabled: isEditing,
+                  style: TextStyle(fontSize: isTablet ? 18 : 14),
+                  decoration: InputDecoration(
+                    labelText: "Last Name",
+                    labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
+                    prefixIcon: Icon(
+                      Icons.person_outline,
+                      size: isTablet ? 28 : 24,
+                      color: const Color.fromARGB(255, 229, 128, 162),
+                    ),
+                    border: const OutlineInputBorder(),
+                    filled: true,
+                    fillColor:
+                        isEditing ? Colors.white : Colors.grey.shade100,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 20 : 16,
                       vertical: isTablet ? 20 : 16,
@@ -446,13 +483,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     labelText: "Username",
                     labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
                     prefixIcon: Icon(
-                      Icons.person_outline,
+                      Icons.alternate_email,
                       size: isTablet ? 28 : 24,
                       color: const Color.fromARGB(255, 229, 128, 162),
                     ),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: isEditing ? Colors.white : Colors.grey.shade100,
+                    fillColor:
+                        isEditing ? Colors.white : Colors.grey.shade100,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 20 : 16,
                       vertical: isTablet ? 20 : 16,
@@ -476,7 +514,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: isEditing ? Colors.white : Colors.grey.shade100,
+                    fillColor:
+                        isEditing ? Colors.white : Colors.grey.shade100,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 20 : 16,
                       vertical: isTablet ? 20 : 16,
@@ -502,7 +541,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     border: const OutlineInputBorder(),
                     filled: true,
-                    fillColor: isEditing ? Colors.white : Colors.grey.shade100,
+                    fillColor:
+                        isEditing ? Colors.white : Colors.grey.shade100,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 20 : 16,
                       vertical: isTablet ? 20 : 16,
@@ -519,14 +559,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: OutlinedButton(
                           onPressed: () {
                             setState(() {
-                              fullNameController.text = widget.fullName;
+                              firstNameController.text = widget.firstName;
+                              lastNameController.text = widget.lastName;
                               usernameController.text = widget.username;
                               emailController.text = widget.email;
                               passwordController.text = widget.password;
                               _profileImage = null;
                               isEditing = false;
                             });
-                            showCenterMessage("Changes cancelled", color: Colors.orange.shade300);
+                            showCenterMessage("Changes cancelled",
+                                color: Colors.orange.shade300);
                           },
                           style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
@@ -542,7 +584,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             style: TextStyle(
                               fontSize: isTablet ? 20 : 18,
                               fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 229, 128, 162),
+                              color:
+                                  const Color.fromARGB(255, 229, 128, 162),
                             ),
                           ),
                         ),
@@ -560,7 +603,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 229, 128, 162),
+                          backgroundColor:
+                              const Color.fromARGB(255, 229, 128, 162),
                           padding: EdgeInsets.symmetric(
                             vertical: isTablet ? 20 : 16,
                           ),

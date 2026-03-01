@@ -2,7 +2,8 @@ import 'package:flower_blossom/features/auth/domain/entities/auth_entity.dart';
 
 class AuthApiModel {
   final String? authId;
-  final String fullName;
+  final String firstName;
+  final String lastName;
   final String email;
   final String username;
   final String? password;
@@ -11,7 +12,8 @@ class AuthApiModel {
 
   AuthApiModel({
     this.authId,
-    required this.fullName,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     required this.username,
     this.password,
@@ -19,10 +21,11 @@ class AuthApiModel {
     this.profilePicture,
   });
 
-  // info: To JSON - ✅ CORRECTED to match backend expectations
+  // To JSON - sends firstName and lastName to backend
   Map<String, dynamic> toJson() {
     return {
-      "name": fullName, // ✅ Backend expects "name" not "fullName"
+      "firstName": firstName,
+      "lastName": lastName,
       "email": email,
       "username": username,
       "password": password,
@@ -31,22 +34,24 @@ class AuthApiModel {
     };
   }
 
-  // info: from JSON - ✅ CORRECTED to properly parse backend response
+  // From JSON - parses backend response
   factory AuthApiModel.fromJson(Map<String, dynamic> json) {
     return AuthApiModel(
       authId: json["_id"] as String?,
-      fullName: json["name"] as String? ?? json["username"] as String, // ✅ Backend returns "name"
+      firstName: json["firstName"] as String? ?? "",
+      lastName: json["lastName"] as String? ?? "",
       email: json["email"] as String,
       username: json["username"] as String,
       profilePicture: json["profilePicture"] as String?,
     );
   }
 
-  // info: to entity
+  // To entity
   AuthEntity toEntity() {
     return AuthEntity(
       authId: authId,
-      fullName: fullName,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       username: username,
       confirmPassword: confirmPassword,
@@ -54,20 +59,21 @@ class AuthApiModel {
     );
   }
 
-  // info: from entity - ✅ CORRECTED to include confirmPassword
+  // From entity
   factory AuthApiModel.fromEntity(AuthEntity entity) {
     return AuthApiModel(
       authId: entity.authId,
-      fullName: entity.fullName,
+      firstName: entity.firstName,
+      lastName: entity.lastName,
       email: entity.email,
       username: entity.username,
       password: entity.password,
-      confirmPassword: entity.confirmPassword, // ✅ ADDED
+      confirmPassword: entity.confirmPassword,
       profilePicture: entity.profilePicture,
     );
   }
 
-  // info: to entity list
+  // To entity list
   static List<AuthEntity> toEntityList(List<AuthApiModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }

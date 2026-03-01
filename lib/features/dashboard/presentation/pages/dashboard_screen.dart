@@ -21,10 +21,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Get current user data from UserStorage
     final currentUser = UserStorage.getCurrentUser();
-    
+
     _bottomScreens = [
       HomeScreen(
         onAddToCart: (CartItem item) {
@@ -34,14 +34,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
       ),
       CartScreen(cartItems: _cartItems),
-      // ✅ Profile Screen with real user data
+      // Profile Screen with real user data
       ProfileScreen(
-        fullName: currentUser?.fullName ?? 'Guest User',
+        firstName: currentUser?.firstName ?? 'Guest',
+        lastName: currentUser?.lastName ?? 'User',
         username: currentUser?.username ?? 'guest',
         email: currentUser?.email ?? 'guest@example.com',
         password: currentUser?.password ?? '',
       ),
-      AboutScreen(userName: currentUser?.fullName ?? 'Guest User'),
+      AboutScreen(userName: currentUser?.firstName ?? 'Guest'),
     ];
   }
 
@@ -69,14 +70,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: 'Cart'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.info), label: 'About'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
       ),
     );

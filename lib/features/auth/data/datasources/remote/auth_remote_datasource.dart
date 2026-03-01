@@ -35,12 +35,13 @@ class AuthRemoteDatasource implements IAuthRemoteDatasource {
       final data = response.data["data"] as Map<String, dynamic>;
       final user = AuthApiModel.fromJson(data);
 
-      // info: Save user session
+      // Save user session
       await _userSessionService.saveUserSession(
         userId: user.authId!,
         email: user.email,
         username: user.username,
-        fullName: user.fullName,
+        firstName: user.firstName,
+        lastName: user.lastName,
       );
 
       return user;

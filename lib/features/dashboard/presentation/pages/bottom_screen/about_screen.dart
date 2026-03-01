@@ -51,7 +51,8 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  SimpleDialogOption _countryOption(String country, String flag, bool isTablet) {
+  SimpleDialogOption _countryOption(
+      String country, String flag, bool isTablet) {
     return SimpleDialogOption(
       onPressed: () {
         setState(() => selectedCountry = country);
@@ -87,7 +88,12 @@ class _AboutScreenState extends State<AboutScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Full Name: ${currentUser?.fullName ?? widget.userName}',
+              'First Name: ${currentUser?.firstName ?? widget.userName}',
+              style: TextStyle(fontSize: isTablet ? 18 : 14),
+            ),
+            SizedBox(height: isTablet ? 8 : 4),
+            Text(
+              'Last Name: ${currentUser?.lastName ?? ''}',
               style: TextStyle(fontSize: isTablet ? 18 : 14),
             ),
             SizedBox(height: isTablet ? 8 : 4),
@@ -361,10 +367,7 @@ class _AboutScreenState extends State<AboutScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Clear user data
               UserStorage.clearUser();
-              
-              // Navigate to login and remove all previous routes
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginPage()),
                 (route) => false,
@@ -419,7 +422,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   onTap: _showAccountInfo,
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.public,
@@ -441,7 +443,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   onTap: _chooseCountry,
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.dark_mode,
@@ -463,7 +464,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.policy,
@@ -481,7 +481,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   onTap: _showPolicies,
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.help,
@@ -499,7 +498,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   onTap: _showHelp,
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.feedback,
@@ -517,7 +515,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   onTap: _showFeedback,
                 ),
                 const Divider(),
-
                 ListTile(
                   leading: Icon(
                     Icons.info,
@@ -538,8 +535,6 @@ class _AboutScreenState extends State<AboutScreen> {
               ],
             ),
           ),
-
-          // Logout Button - NOW PINK!
           Padding(
             padding: EdgeInsets.all(isTablet ? 24.0 : 16.0),
             child: ElevatedButton.icon(

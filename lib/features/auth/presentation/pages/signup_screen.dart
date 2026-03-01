@@ -15,8 +15,8 @@ class SignUpPage extends ConsumerStatefulWidget {
 class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // ✅ UPDATED: Controllers for all required fields
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -24,7 +24,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   void dispose() {
-    fullNameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -35,7 +36,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   Future<void> _handleSignup() async {
     if (_formKey.currentState!.validate()) {
       ref.read(authViewModelProvider.notifier).register(
-        fullName: fullNameController.text.trim(),
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
         username: usernameController.text.trim(),
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
@@ -46,10 +48,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions for responsive design
     final size = MediaQuery.of(context).size;
     final isTablet = size.shortestSide >= 600;
-    
+
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.error) {
         showMySnackBar(
@@ -102,12 +103,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                   SizedBox(height: isTablet ? 40 : 32),
 
-                  // ✅ Full Name Field
+                  // First Name Field
                   TextFormField(
-                    controller: fullNameController,
+                    controller: firstNameController,
                     style: TextStyle(fontSize: isTablet ? 18 : 14),
                     decoration: InputDecoration(
-                      labelText: 'Full Name',
+                      labelText: 'First Name',
                       labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
                       prefixIcon: Icon(
                         Icons.person,
@@ -122,14 +123,41 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your full name';
+                        return 'Please enter your first name';
                       }
                       return null;
                     },
                   ),
                   SizedBox(height: isTablet ? 20 : 16),
 
-                  // ✅ Username Field
+                  // Last Name Field
+                  TextFormField(
+                    controller: lastNameController,
+                    style: TextStyle(fontSize: isTablet ? 18 : 14),
+                    decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
+                      prefixIcon: Icon(
+                        Icons.person_outline,
+                        color: const Color.fromARGB(255, 229, 128, 162),
+                        size: isTablet ? 28 : 24,
+                      ),
+                      border: const OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 20 : 16,
+                        vertical: isTablet ? 20 : 16,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your last name';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: isTablet ? 20 : 16),
+
+                  // Username Field
                   TextFormField(
                     controller: usernameController,
                     style: TextStyle(fontSize: isTablet ? 18 : 14),
@@ -137,7 +165,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                       labelText: 'Username',
                       labelStyle: TextStyle(fontSize: isTablet ? 18 : 14),
                       prefixIcon: Icon(
-                        Icons.person_outline,
+                        Icons.alternate_email,
                         color: const Color.fromARGB(255, 229, 128, 162),
                         size: isTablet ? 28 : 24,
                       ),
@@ -159,7 +187,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                   SizedBox(height: isTablet ? 20 : 16),
 
-                  // ✅ Email Field
+                  // Email Field
                   TextFormField(
                     controller: emailController,
                     style: TextStyle(fontSize: isTablet ? 18 : 14),
@@ -182,7 +210,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -190,7 +219,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                   SizedBox(height: isTablet ? 20 : 16),
 
-                  // ✅ Password Field
+                  // Password Field
                   TextFormField(
                     controller: passwordController,
                     obscureText: true,
@@ -221,7 +250,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                   SizedBox(height: isTablet ? 20 : 16),
 
-                  // ✅ Confirm Password Field
+                  // Confirm Password Field
                   TextFormField(
                     controller: confirmPasswordController,
                     obscureText: true,
@@ -263,7 +292,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         isTablet ? 60 : 48,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       textStyle: TextStyle(
                         fontSize: isTablet ? 18 : 16,
