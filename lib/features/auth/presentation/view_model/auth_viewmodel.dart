@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Riverpod provider for AuthViewModel
 final authViewModelProvider =
-    NotifierProvider<AuthViewModel, AuthState>(() => AuthViewModel());
+    NotifierProvider<AuthViewModel, AuthState>(AuthViewModel.new);
 
 class AuthViewModel extends Notifier<AuthState> {
   late final RegisterUsecase _registerUsecase;
@@ -17,14 +17,15 @@ class AuthViewModel extends Notifier<AuthState> {
 
   @override
   AuthState build() {
+    // inject dependencies via Riverpod providers
     _registerUsecase = ref.read(registerUsecaseProvider);
     _loginUsecase = ref.read(loginUseCaseProvider);
     _logoutUsecase = ref.read(logoutUsecaseProvider);
     _getCurrentUserUsecase = ref.read(getCurrentUserUsecaseProvider);
+
     return AuthState.initial();
   }
 
-  /// Register new user
   Future<void> register({
     required String firstName,
     required String lastName,
@@ -51,7 +52,6 @@ class AuthViewModel extends Notifier<AuthState> {
     );
   }
 
-  /// Login user
   Future<void> login({
     required String email,
     required String password,
@@ -70,7 +70,6 @@ class AuthViewModel extends Notifier<AuthState> {
     );
   }
 
-  /// Logout user
   Future<void> logout() async {
     state = AuthState.loading();
 
@@ -81,7 +80,6 @@ class AuthViewModel extends Notifier<AuthState> {
     );
   }
 
-  /// Get current user
   Future<void> getCurrentUser() async {
     state = AuthState.loading();
 

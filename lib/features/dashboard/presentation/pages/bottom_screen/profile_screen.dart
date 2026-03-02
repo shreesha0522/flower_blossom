@@ -4,6 +4,7 @@ import 'package:flower_blossom/core/services/upload_service.dart';
 import 'package:flower_blossom/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async';
 import 'dart:io';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -39,6 +40,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String? _profileImageUrl;
   final ImagePicker _picker = ImagePicker();
   final String defaultProfileImagePath = 'assets/images/girl.jpg';
+
+  // ✅ ADD THIS: track the overlay timer so we can cancel it
+  Timer? _messageTimer;
+  OverlayEntry? _currentOverlayEntry;
 
   @override
   void initState() {
@@ -96,6 +101,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   void dispose() {
+    // ✅ FIX: Cancel timer and remove overlay before disposing
+    _messageTimer?.cancel();
+    _currentOverlayEntry?.remove();
+    _currentOverlayEntry = null;
+
     firstNameController.dispose();
     lastNameController.dispose();
     usernameController.dispose();
@@ -226,7 +236,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  // ✅ FIX: Use Timer field so it can be cancelled in dispose()
   void showCenterMessage(String message, {Color? color}) {
+    // Cancel any existing timer and remove existing overlay
+    _messageTimer?.cancel();
+    _currentOverlayEntry?.remove();
+    _currentOverlayEntry = null;
+
+    if (!mounted) return;
+
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (_) => Center(
@@ -251,8 +269,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
 
+    _currentOverlayEntry = overlayEntry;
     overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 2), () => overlayEntry.remove());
+
+    _messageTimer = Timer(const Duration(seconds: 2), () {
+      _currentOverlayEntry?.remove();
+      _currentOverlayEntry = null;
+    });
   }
 
   bool validateProfile() {
@@ -399,8 +422,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Container(
                             padding: EdgeInsets.all(isTablet ? 10 : 8),
                             decoration: BoxDecoration(
-                              color:
-                                  const Color.fromARGB(255, 229, 128, 162),
+                              color: const Color.fromARGB(255, 229, 128, 162),
                               shape: BoxShape.circle,
                               border:
                                   Border.all(color: Colors.white, width: 3),
