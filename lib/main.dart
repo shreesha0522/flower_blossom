@@ -11,17 +11,12 @@ import 'core/services/storage/user_session.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  print('🔥 FLOWER BLOSSOM APP STARTED 🔥');
   
   // Initialize Hive
-  print('📦 Initializing Hive...');
   await Hive.initFlutter();
-  print('✅ Hive initialized successfully!');
   
   // Initialize SharedPreferences
-  print('📦 Initializing SharedPreferences...');
   final sharedPreferences = await SharedPreferences.getInstance();
-  print('✅ SharedPreferences initialized successfully!');
   
   runApp(
     ProviderScope(
