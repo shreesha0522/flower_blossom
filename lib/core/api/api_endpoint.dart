@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Info: Base URL - CORRECTED FOR YOUR BACKEND
-  static const String baseUrl = "http://10.0.2.2:8000/api"; // Changed: port 5001->8000, removed /v1
+  static const String baseUrl = "http://192.168.1.2:8000/api";
   // For physical device (uncomment and use your computer's IP):
   // static const String baseUrl = "http://192.168.100.8:8000/api";
 

@@ -1,0 +1,16 @@
+name: unit_tests
+description: Dedicated test package for flower_blossom
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.3.7
+  dartz: ^0.10.1
+  mocktail: ^0.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

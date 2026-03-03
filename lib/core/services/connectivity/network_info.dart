@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,13 +41,5 @@ class NetworkInfo implements INetworkInfo {
     // return await _checkForInternet();
   }
 
-  /// Optional: Real internet availability check
-  Future<bool> _checkForInternet() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
-    } on SocketException {
-      return false;
-    }
   }
-}
+

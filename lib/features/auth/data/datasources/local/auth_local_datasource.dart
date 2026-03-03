@@ -56,28 +56,4 @@ class AuthLocalDatasource implements IAuthLocalDatasource {
       return false;
     }
   }
-  
-  @override
-  Future<bool> deleteUser(String userId) {
-    // TODO: implement deleteUser
-    throw UnimplementedError();
-  }
-  
-  @override
-  getUserByEmail(String email) {
-    // TODO: implement getUserByEmail
-    throw UnimplementedError();
-  }
-  
-  @override
-  getUserById(String userId) {
-    // TODO: implement getUserById
-    throw UnimplementedError();
-  }
-  
-  @override
-  Future<bool> updateUser(user) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
-  }
 }

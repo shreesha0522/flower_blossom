@@ -21,10 +21,31 @@ class FlowerDetailScreen extends StatefulWidget {
   State<FlowerDetailScreen> createState() => _FlowerDetailScreenState();
 }
 
-class _FlowerDetailScreenState extends State<FlowerDetailScreen> {
+class _FlowerDetailScreenState extends State<FlowerDetailScreen> with SingleTickerProviderStateMixin {
   int quantity = 1;
   bool isFavorite = false;
   bool isBouquet = false;
+
+  late AnimationController _bounceController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+      lowerBound: 0.9,
+      upperBound: 1.0,
+    );
+    _scaleAnimation = CurvedAnimation(parent: _bounceController, curve: Curves.easeOut);
+  }
+
+  @override
+  void dispose() {
+    _bounceController.dispose();
+    super.dispose();
+  }
 
   void showAddedToCartPopup() {
     showDialog(
@@ -67,7 +88,10 @@ class _FlowerDetailScreenState extends State<FlowerDetailScreen> {
 
   double get totalPrice => widget.price * quantity + (isBouquet ? 1400 : 0);
 
-  void addToCart() {
+  void addToCart() async {
+    await _bounceController.forward();
+    await _bounceController.reverse();
+
     widget.onAddToCart(
       CartItem(
         name: widget.flowerName,
@@ -148,7 +172,6 @@ class _FlowerDetailScreenState extends State<FlowerDetailScreen> {
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
         decoration: BoxDecoration(
           color: Colors.white,
-          // ignore: deprecated_member_use
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8)],
         ),
         child: Row(
@@ -165,13 +188,18 @@ class _FlowerDetailScreenState extends State<FlowerDetailScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: SizedBox(
-                height: 50,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.shopping_cart, color: Colors.black),
-                  label: const Text("Add to Cart", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 229, 128, 162), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                  onPressed: addToCart,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                    label: const Text("Add to Cart", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 229, 128, 162),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                    onPressed: addToCart,
+                  ),
                 ),
               ),
             ),

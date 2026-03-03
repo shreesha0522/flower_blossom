@@ -11,7 +11,6 @@ class OnboardingFlow extends StatefulWidget {
 
 class _OnboardingFlowState extends State<OnboardingFlow> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
 
   final List<Widget> _onboardingScreens = [
     FirstOnboardingScreen(),
@@ -25,11 +24,6 @@ class _OnboardingFlowState extends State<OnboardingFlow> {
       body: PageView.builder(
         controller: _pageController,
         itemCount: _onboardingScreens.length,
-        onPageChanged: (int page) {
-          setState(() {
-            _currentPage = page;
-          });
-        },
         itemBuilder: (context, index) {
           return _onboardingScreens[index];
         },

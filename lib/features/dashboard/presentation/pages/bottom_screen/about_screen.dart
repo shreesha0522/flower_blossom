@@ -1,5 +1,6 @@
 import 'package:flower_blossom/core/utils/user_storage.dart';
 import 'package:flower_blossom/features/auth/presentation/pages/login_screen.dart';
+import 'package:flower_blossom/features/sensors/call_screen.dart'; // ✅ Added
 import 'package:flutter/material.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -530,6 +531,35 @@ class _AboutScreenState extends State<AboutScreen> {
                     size: isTablet ? 24 : 20,
                   ),
                   onTap: _showAboutApp,
+                ),
+                const Divider(),
+
+                // ✅ NEW: Call Us with Proximity Sensor
+                ListTile(
+                  leading: Icon(
+                    Icons.call,
+                    color: const Color.fromARGB(255, 229, 128, 162),
+                    size: isTablet ? 32 : 24,
+                  ),
+                  title: Text(
+                    'Call Us',
+                    style: TextStyle(fontSize: isTablet ? 18 : 16),
+                  ),
+                  subtitle: Text(
+                    '+977-1-234567',
+                    style: TextStyle(fontSize: isTablet ? 16 : 14),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: isTablet ? 24 : 20,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const CallScreen()),
+                    );
+                  },
                 ),
                 const Divider(),
               ],

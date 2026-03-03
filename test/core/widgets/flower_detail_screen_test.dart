@@ -19,19 +19,19 @@ void main() {
   group('FlowerDetailScreen Widget Tests', () {
     testWidgets('should display flower name', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Rose'), findsWidgets);
     });
 
     testWidgets('should display description', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('A beautiful red rose.'), findsOneWidget);
     });
 
     testWidgets('should display Add to Cart button', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Add to Cart'), findsOneWidget);
     });
 
@@ -40,7 +40,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
 
@@ -49,9 +49,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add_circle_outline));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('2'), findsOneWidget);
     });
 
@@ -60,11 +60,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add_circle_outline));
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.remove_circle_outline));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
 
@@ -73,9 +73,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.remove_circle_outline));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
 
@@ -84,40 +84,38 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       final switchFinder = find.byType(Switch);
       final Switch before = tester.widget(switchFinder);
       expect(before.value, false);
       await tester.tap(switchFinder);
-      await tester.pump();
+      await tester.pumpAndSettle();
       final Switch after = tester.widget(switchFinder);
       expect(after.value, true);
     });
 
     testWidgets('should toggle favorite icon', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.favorite_border), findsOneWidget);
       await tester.tap(find.byIcon(Icons.favorite_border));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.byIcon(Icons.favorite), findsOneWidget);
     });
 
     testWidgets('should show Added to Cart popup', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle(); // ✅ waits for animation to complete
       expect(find.text('Added to Cart'), findsOneWidget);
     });
 
     testWidgets('should close popup when OK tapped', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
       expect(find.text('Added to Cart'), findsNothing);
@@ -126,9 +124,9 @@ void main() {
     testWidgets('should call onAddToCart with correct CartItem', (tester) async {
       CartItem? addedItem;
       await tester.pumpWidget(buildScreen(onAddToCart: (item) => addedItem = item));
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(addedItem?.name, 'Rose');
       expect(addedItem?.price, 500);
       expect(addedItem?.quantity, 1);
@@ -136,7 +134,7 @@ void main() {
 
     testWidgets('should display Description label', (tester) async {
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Description'), findsOneWidget);
     });
 
@@ -145,7 +143,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(buildScreen());
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Quantity'), findsOneWidget);
     });
   });

@@ -37,9 +37,24 @@ class AuthRepository implements IAuthRepository {
         _networkInfo = networkInfo;
 
   @override
-  Future<Either<Failure, AuthEntity>> getCurrentUser() {
-    // TODO: implement getCurrentUser
-    throw UnimplementedError();
+  Future<Either<Failure, AuthEntity>> getCurrentUser() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final result = await _authRemoteDatasource.getCurrentUser();
+        if (result != null) return Right(result.toEntity());
+        return Left(ApiFailure(message: "User not found"));
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final result = await _authLocalDatasource.getCurrentUser();
+        if (result != null) return Right(result.toEntity());
+        return Left(LocalDataBaseFailure(message: "User not found locally"));
+      } catch (e) {
+        return Left(LocalDataBaseFailure(message: e.toString()));
+      }
+    }
   }
 
   @override

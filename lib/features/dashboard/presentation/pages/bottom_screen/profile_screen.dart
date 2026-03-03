@@ -50,18 +50,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
 
     final authState = ref.read(authViewModelProvider);
-    print("==================== DEBUG START ====================");
-    print("🔍 Logged in user firstName: ${authState.entity?.firstName}");
-    print("🔍 Logged in user lastName: ${authState.entity?.lastName}");
-    print("🔍 Logged in user username: ${authState.entity?.username}");
-    print("🔍 Logged in user email: ${authState.entity?.email}");
-    print("🔍 Logged in user ID: ${authState.entity?.authId}");
-    print("---");
-    print("📦 Widget firstName parameter: ${widget.firstName}");
-    print("📦 Widget lastName parameter: ${widget.lastName}");
-    print("📦 Widget username parameter: ${widget.username}");
-    print("📦 Widget email parameter: ${widget.email}");
-    print("==================== DEBUG END ====================");
+    debugPrint("==================== DEBUG START ====================");
+    debugPrint("🔍 Logged in user firstName: ${authState.entity?.firstName}");
+    debugPrint("🔍 Logged in user lastName: ${authState.entity?.lastName}");
+    debugPrint("🔍 Logged in user username: ${authState.entity?.username}");
+    debugPrint("🔍 Logged in user email: ${authState.entity?.email}");
+    debugPrint("🔍 Logged in user ID: ${authState.entity?.authId}");
+    debugPrint("---");
+    debugPrint("📦 Widget firstName parameter: ${widget.firstName}");
+    debugPrint("📦 Widget lastName parameter: ${widget.lastName}");
+    debugPrint("📦 Widget username parameter: ${widget.username}");
+    debugPrint("📦 Widget email parameter: ${widget.email}");
+    debugPrint("==================== DEBUG END ====================");
 
     firstNameController = TextEditingController(text: widget.firstName);
     lastNameController = TextEditingController(text: widget.lastName);
@@ -77,11 +77,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final userId = authState.entity?.authId ?? "";
 
     if (userId.isEmpty) {
-      print("❌ No user logged in");
+      debugPrint("❌ No user logged in");
       return;
     }
 
-    print("📸 Loading profile image for userId: $userId");
+    debugPrint("📸 Loading profile image for userId: $userId");
 
     try {
       final uploadService = ref.read(uploadServiceProvider);
@@ -90,12 +90,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         setState(() {
           _profileImageUrl = imageUrl;
         });
-        print("✅ Profile image loaded: $imageUrl");
+        debugPrint("✅ Profile image loaded: $imageUrl");
       } else {
-        print("ℹ️ No profile image found for this user");
+        debugPrint("ℹ️ No profile image found for this user");
       }
     } catch (e) {
-      print("❌ Error loading profile image: $e");
+      debugPrint("❌ Error loading profile image: $e");
     }
   }
 
@@ -189,7 +189,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final authState = ref.read(authViewModelProvider);
       final userId = authState.entity?.authId ?? "";
 
-      print("📤 Attempting to upload image for userId: $userId");
+      debugPrint("📤 Attempting to upload image for userId: $userId");
 
       if (userId.isEmpty) {
         showCenterMessage("User not logged in", color: Colors.red.shade300);
@@ -204,12 +204,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         imageFile: _profileImage!,
         userId: userId,
         onProgress: (sent, total) {
-          print(
+          debugPrint(
               "Upload progress: ${(sent / total * 100).toStringAsFixed(0)}%");
         },
       );
 
-      print("📥 Upload result: $result");
+      debugPrint("📥 Upload result: $result");
 
       if (result['success'] == true) {
         setState(() {
@@ -221,7 +221,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           "Profile picture updated successfully!",
           color: const Color.fromARGB(255, 229, 128, 162),
         );
-        print("✅ Image uploaded successfully: $_profileImageUrl");
+        debugPrint("✅ Image uploaded successfully: $_profileImageUrl");
       }
     } catch (e) {
       setState(() {
@@ -232,7 +232,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         "Failed to upload image: $e",
         color: Colors.red.shade300,
       );
-      print("❌ Upload error: $e");
+      debugPrint("❌ Upload error: $e");
     }
   }
 
@@ -346,7 +346,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (_profileImage != null) {
       return FileImage(_profileImage!);
     } else if (_profileImageUrl != null && _profileImageUrl!.isNotEmpty) {
-      final fullUrl = "http://10.0.2.2:8000$_profileImageUrl";
+     final fullUrl = "http://192.168.1.2:8000$_profileImageUrl";
       return NetworkImage(fullUrl);
     } else {
       return const AssetImage('assets/images/girl.jpg');

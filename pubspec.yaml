@@ -1,11 +1,10 @@
 name: flower_blossom
 description: "A new Flutter project."
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: '>=3.0.0 <4.0.0'   # ✅ Fixed
 
 dependencies:
   flutter:
@@ -23,23 +22,22 @@ dependencies:
   dio: ^5.4.1
   dio_smart_retry: ^7.0.1
   pretty_dio_logger: ^1.4.0
-  connectivity_plus: ^7.0.0
-  flutter_secure_storage: ^10.0.0
+  connectivity_plus: ^6.1.1   # ✅ Downgraded for stability
+  flutter_secure_storage: ^9.2.2  # ✅ Downgraded for stability
   shared_preferences: ^2.5.4
   jwt_decoder: ^2.0.1
-  google_sign_in: ^7.2.0
-  sign_in_with_apple: ^7.0.1
+  google_sign_in: ^6.2.1      # ✅ Downgraded for stability
+  sign_in_with_apple: ^6.1.2  # ✅ Downgraded for stability
+  proximity_sensor: ^1.3.10
+  sensors_plus: ^3.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
-  # 🧪 TESTING DEPENDENCIES
-  mockito: ^5.4.4                    # For mocking objects in unit tests
-  build_runner: ^2.4.6               # Required to generate mock classes
-  hive_generator: ^2.0.1             # For Hive adapters generation
-  mocktail: ^0.3.0              # Alternative to Mockito for null safety
-  # Code quality
+  mockito: ^5.4.4
+  build_runner: ^2.4.6
+  hive_generator: ^2.0.1
+  mocktail: ^0.3.0
   analyzer: ^6.4.1
   flutter_lints: ^5.0.0
 

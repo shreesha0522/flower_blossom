@@ -1,78 +1,55 @@
 import 'package:flower_blossom/features/dashboard/presentation/pages/bottom_screen/about_screen.dart';
 import 'package:flower_blossom/features/dashboard/presentation/pages/bottom_screen/cart_screen.dart';
 import 'package:flower_blossom/features/dashboard/presentation/pages/bottom_screen/profile_screen.dart';
-import 'package:flower_blossom/core/utils/user_storage.dart';
+import 'package:flower_blossom/features/dashboard/presentation/view_model/dashboard_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'bottom_screen/home_screen.dart';
 import '../../../cart/presentation/cart_item.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(dashboardViewModelProvider);
+    final viewModel = ref.read(dashboardViewModelProvider.notifier);
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 0;
-  final List<CartItem> _cartItems = [];
-  late final List<Widget> _bottomScreens;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Get current user data from UserStorage
-    final currentUser = UserStorage.getCurrentUser();
-
-    _bottomScreens = [
+    final screens = [
       HomeScreen(
-        onAddToCart: (CartItem item) {
-          setState(() {
-            _cartItems.add(item);
-          });
-        },
+        onAddToCart: (CartItem item) => viewModel.addToCart(item),
       ),
-      CartScreen(cartItems: _cartItems),
-      // Profile Screen with real user data
+      CartScreen(),
       ProfileScreen(
-        firstName: currentUser?.firstName ?? 'Guest',
-        lastName: currentUser?.lastName ?? 'User',
-        username: currentUser?.username ?? 'guest',
-        email: currentUser?.email ?? 'guest@example.com',
-        password: currentUser?.password ?? '',
+        firstName: state.firstName,
+        lastName: state.lastName,
+        username: state.username,
+        email: state.email,
+        password: '',
       ),
-      AboutScreen(userName: currentUser?.firstName ?? 'Guest'),
+      AboutScreen(userName: state.firstName),
     ];
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: (_selectedIndex == 0 ||
-              _selectedIndex == 1 ||
-              _selectedIndex == 3)
+      appBar: (state.selectedIndex == 0 ||
+              state.selectedIndex == 1 ||
+              state.selectedIndex == 3)
           ? AppBar(
-              title: Text(_getTitle(_selectedIndex)),
+              title: Text(_getTitle(state.selectedIndex)),
               centerTitle: true,
               backgroundColor: const Color.fromARGB(255, 229, 128, 162),
             )
           : null,
-      body: _bottomScreens[_selectedIndex],
+      body: screens[state.selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
+        currentIndex: state.selectedIndex,
         selectedItemColor: const Color.fromARGB(255, 229, 128, 162),
         unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        onTap: (index) => viewModel.setIndex(index),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag), label: 'Cart'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: 'Cart'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
@@ -82,14 +59,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _getTitle(int index) {
     switch (index) {
-      case 0:
-        return 'Home';
-      case 1:
-        return 'Cart';
-      case 3:
-        return 'About';
-      default:
-        return '';
+      case 0: return 'Home';
+      case 1: return 'Cart';
+      case 3: return 'About';
+      default: return '';
     }
   }
 }

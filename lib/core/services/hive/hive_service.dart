@@ -1,10 +1,8 @@
 import 'package:flower_blossom/core/constant/hive_table_constant.dart';
 import 'package:flower_blossom/features/auth/data/models/auth_hive_model.dart';
+import 'package:flower_blossom/features/cart/data/cart_hive_model.dart';
 import 'package:hive/hive.dart';
-
-// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final hiveServiceProvider = Provider<HiveService>((ref) {
@@ -15,7 +13,6 @@ class HiveService {
   Future<void> init() async {
     final directory = await getApplicationDocumentsDirectory();
     final path = "${directory.path}/${HiveTableConstant.dbName}";
-
     Hive.init(path);
     _registerAdapters();
     await _openBoxes();
@@ -25,49 +22,64 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.authTypeId)) {
       Hive.registerAdapter(AuthHiveModelAdapter());
     }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.cartTypeId)) {
+      Hive.registerAdapter(CartItemHiveModelAdapter());
+    }
   }
 
   Future<void> _openBoxes() async {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
+    await Hive.openBox<CartItemHiveModel>(HiveTableConstant.cartTable);
   }
 
   Future<void> closeBoxes() async {
     await Hive.close();
   }
 
-  // Hack: =================== Auth CRUD Operations ===========================
-
+  // =================== Auth CRUD ===================
   Box<AuthHiveModel> get _authBox =>
       Hive.box<AuthHiveModel>(HiveTableConstant.authTable);
 
-  // Register a user
   Future<AuthHiveModel> registerUser(AuthHiveModel model) async {
     await _authBox.put(model.authId, model);
     return model;
   }
 
-  // Login user
   Future<AuthHiveModel?> loginUser(String email, String password) async {
-    final user = await _authBox.values.where(
+    final user = _authBox.values.where(
       (user) => user.email == email && user.password == password,
     );
-
     if (user.isNotEmpty) return user.first;
-
     return null;
   }
 
-  // get current user
   Future<AuthHiveModel?> getCurrentUser(String authId) async {
     return _authBox.get(authId);
   }
 
-  // check email already exists
   Future<bool> isEmailExists(String email) async {
     final users = _authBox.values.where((user) => user.email == email);
     return users.isNotEmpty;
   }
 
-  // logout
   Future<void> logoutUser() async {}
+
+  // =================== Cart CRUD ===================
+  Box<CartItemHiveModel> get _cartBox =>
+      Hive.box<CartItemHiveModel>(HiveTableConstant.cartTable);
+
+  Future<void> saveCartItems(List<CartItemHiveModel> items) async {
+    await _cartBox.clear();
+    for (int i = 0; i < items.length; i++) {
+      await _cartBox.put(i, items[i]);
+    }
+  }
+
+  List<CartItemHiveModel> getCartItems() {
+    return _cartBox.values.toList();
+  }
+
+  Future<void> clearCart() async {
+    await _cartBox.clear();
+  }
 }
