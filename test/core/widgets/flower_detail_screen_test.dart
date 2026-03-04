@@ -22,19 +22,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Rose'), findsWidgets);
     });
-
     testWidgets('should display description', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
       expect(find.text('A beautiful red rose.'), findsOneWidget);
     });
-
     testWidgets('should display Add to Cart button', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
       expect(find.text('Add to Cart'), findsOneWidget);
     });
-
     testWidgets('should display quantity as 1 initially', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
@@ -43,7 +40,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
-
     testWidgets('should increase quantity when + is tapped', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
@@ -54,7 +50,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('2'), findsOneWidget);
     });
-
     testWidgets('should decrease quantity after increase', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
@@ -67,7 +62,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
-
     testWidgets('should not decrease quantity below 1', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
@@ -78,7 +72,6 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('1'), findsOneWidget);
     });
-
     testWidgets('should toggle bouquet switch', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
@@ -93,7 +86,6 @@ void main() {
       final Switch after = tester.widget(switchFinder);
       expect(after.value, true);
     });
-
     testWidgets('should toggle favorite icon', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
@@ -102,42 +94,47 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byIcon(Icons.favorite), findsOneWidget);
     });
-
     testWidgets('should show Added to Cart popup', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pumpAndSettle(); // ✅ waits for animation to complete
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await tester.pump();
       expect(find.text('Added to Cart'), findsOneWidget);
     });
-
     testWidgets('should close popup when OK tapped', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pumpAndSettle();
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await tester.pump();
+      expect(find.text('Added to Cart'), findsOneWidget);
       await tester.tap(find.text('OK'));
       await tester.pumpAndSettle();
       expect(find.text('Added to Cart'), findsNothing);
     });
-
     testWidgets('should call onAddToCart with correct CartItem', (tester) async {
       CartItem? addedItem;
       await tester.pumpWidget(buildScreen(onAddToCart: (item) => addedItem = item));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add to Cart'));
-      await tester.pumpAndSettle();
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await tester.pump();
       expect(addedItem?.name, 'Rose');
       expect(addedItem?.price, 500);
       expect(addedItem?.quantity, 1);
     });
-
     testWidgets('should display Description label', (tester) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
       expect(find.text('Description'), findsOneWidget);
     });
-
     testWidgets('should display Quantity label', (tester) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;

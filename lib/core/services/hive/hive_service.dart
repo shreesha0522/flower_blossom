@@ -1,6 +1,7 @@
 import 'package:flower_blossom/core/constant/hive_table_constant.dart';
 import 'package:flower_blossom/features/auth/data/models/auth_hive_model.dart';
 import 'package:flower_blossom/features/cart/data/cart_hive_model.dart';
+import 'package:flower_blossom/features/order/data/order_hive_model.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,11 +26,15 @@ class HiveService {
     if (!Hive.isAdapterRegistered(HiveTableConstant.cartTypeId)) {
       Hive.registerAdapter(CartItemHiveModelAdapter());
     }
+    if (!Hive.isAdapterRegistered(HiveTableConstant.orderTypeId)) {
+      Hive.registerAdapter(OrderHiveModelAdapter());
+    }
   }
 
   Future<void> _openBoxes() async {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.authTable);
     await Hive.openBox<CartItemHiveModel>(HiveTableConstant.cartTable);
+    await Hive.openBox<OrderHiveModel>(HiveTableConstant.orderTable);
   }
 
   Future<void> closeBoxes() async {
@@ -81,5 +86,22 @@ class HiveService {
 
   Future<void> clearCart() async {
     await _cartBox.clear();
+  }
+  // =================== Order CRUD ===================
+  Box<OrderHiveModel> get _orderBox =>
+      Hive.box<OrderHiveModel>(HiveTableConstant.orderTable);
+
+  Future<void> saveOrder(OrderHiveModel order) async {
+    await _orderBox.put(order.orderId, order);
+  }
+
+  List<OrderHiveModel> getOrdersByUser(String userId) {
+    return _orderBox.values
+        .where((order) => order.userId == userId)
+        .toList();
+  }
+
+  List<OrderHiveModel> getAllOrders() {
+    return _orderBox.values.toList();
   }
 }

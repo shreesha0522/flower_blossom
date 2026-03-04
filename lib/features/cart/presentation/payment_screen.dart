@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PaymentScreen extends StatefulWidget {
-  final double amount; // Total amount to pay
-  final VoidCallback onPaymentSuccess; // Callback after payment is done
+  final double amount;
+  final Future<void> Function() onPaymentSuccess;
 
   const PaymentScreen({
     super.key,
@@ -15,24 +15,22 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String selectedPayment = 'esewa'; // Default payment method
-  bool isProcessing = false; // Track payment processing
+  String selectedPayment = 'esewa';
+  bool isProcessing = false;
 
   void processPayment() async {
-    // Get screen dimensions for responsive design
     final size = MediaQuery.of(context).size;
     final isTablet = size.shortestSide >= 600;
 
-    setState(() {
-      isProcessing = true;
-    });
+    setState(() => isProcessing = true);
 
-    // Show processing payment dialog
+    // Show processing dialog
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isTablet ? 16 : 12)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(isTablet ? 16 : 12)),
         child: Padding(
           padding: EdgeInsets.all(isTablet ? 32 : 24),
           child: Column(
@@ -56,74 +54,62 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 2)); // Simulate payment delay
+    // Simulate payment delay
+    await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
-    
-    Navigator.pop(context); // Close processing dialog
-    
+
+    // Close processing dialog
+    Navigator.of(context).pop();
+
     if (!mounted) return;
-    
-    // Show success message in PINK
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Payment Successful! Rs ${widget.amount.toStringAsFixed(0)}',
-          style: TextStyle(
-            fontSize: isTablet ? 18 : 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: const Color.fromARGB(255, 229, 128, 162), // PINK COLOR
-        duration: const Duration(seconds: 2),
-      ),
+
+    // Clear cart and save order
+    await widget.onPaymentSuccess();
+    await showDialog(context: context, barrierDismissible: false, builder: (context) => AlertDialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), content: Column(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.check_circle, color: Colors.green, size: 70), const SizedBox(height: 16), const Text("Payment Successful! 🌸", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center), const SizedBox(height: 20), ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 229, 128, 162)), onPressed: () => Navigator.pop(context), child: const Text("Continue Shopping", style: TextStyle(color: Colors.white)))])));
+
+    if (!mounted) return;
+
+    // ✅ Navigate to dashboard removing all previous routes
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/dashboard',
+      (route) => false,
     );
-
-    // Wait a moment for user to see the success message
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    if (!mounted) return;
-
-    // Call the success callback which navigates to dashboard
-    widget.onPaymentSuccess();
-
-    setState(() {
-      isProcessing = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions for responsive design
     final size = MediaQuery.of(context).size;
     final isTablet = size.shortestSide >= 600;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFCE4EC),
       appBar: AppBar(
-        title: Text(
-          "Payment",
-          style: TextStyle(fontSize: isTablet ? 24 : 20),
-        ),
+        title: Text("Payment", style: TextStyle(fontSize: isTablet ? 24 : 20)),
         backgroundColor: const Color.fromARGB(255, 229, 128, 162),
         centerTitle: true,
-        iconTheme: IconThemeData(size: isTablet ? 28 : 24),
       ),
       body: Padding(
         padding: EdgeInsets.all(isTablet ? 24 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Total Amount: Rs ${widget.amount.toStringAsFixed(0)}",
-              style: TextStyle(
-                fontSize: isTablet ? 24 : 20,
-                fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(isTablet ? 20 : 16),
+              decoration: BoxDecoration(
+                color: Colors.pink.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                "Total Amount: Rs ${widget.amount.toStringAsFixed(0)}",
+                style: TextStyle(
+                  fontSize: isTablet ? 24 : 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: isTablet ? 32 : 24),
-            
             Text(
               "Choose Payment Method",
               style: TextStyle(
@@ -132,61 +118,42 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
             SizedBox(height: isTablet ? 16 : 12),
-            
             RadioListTile(
               value: 'esewa',
               groupValue: selectedPayment,
-              onChanged: (value) {
-                setState(() {
-                  selectedPayment = value!;
-                });
-              },
-              title: Text(
-                "eSewa",
-                style: TextStyle(fontSize: isTablet ? 18 : 16),
-              ),
-              secondary: Image.asset(
-                'assets/images/esewa.png',
-                width: isTablet ? 90 : 70,
-                height: isTablet ? 90 : 70,
-                fit: BoxFit.contain,
-              ),
+              onChanged: (value) => setState(() => selectedPayment = value!),
+              title: Text("eSewa",
+                  style: TextStyle(fontSize: isTablet ? 18 : 16)),
+              secondary: Image.asset('assets/images/esewa.png',
+                  width: isTablet ? 90 : 70,
+                  height: isTablet ? 90 : 70,
+                  fit: BoxFit.contain),
               activeColor: const Color.fromARGB(255, 229, 128, 162),
             ),
-            
             RadioListTile(
               value: 'khalti',
               groupValue: selectedPayment,
-              onChanged: (value) {
-                setState(() {
-                  selectedPayment = value!;
-                });
-              },
-              title: Text(
-                "Khalti",
-                style: TextStyle(fontSize: isTablet ? 18 : 16),
-              ),
-              secondary: Image.asset(
-                'assets/images/khalti.png',
-                width: isTablet ? 90 : 70,
-                height: isTablet ? 90 : 70,
-                fit: BoxFit.contain,
-              ),
+              onChanged: (value) => setState(() => selectedPayment = value!),
+              title: Text("Khalti",
+                  style: TextStyle(fontSize: isTablet ? 18 : 16)),
+              secondary: Image.asset('assets/images/khalti.png',
+                  width: isTablet ? 90 : 70,
+                  height: isTablet ? 90 : 70,
+                  fit: BoxFit.contain),
               activeColor: const Color.fromARGB(255, 229, 128, 162),
             ),
-            
             const Spacer(),
-            
             SizedBox(
               width: double.infinity,
+              height: isTablet ? 60 : 50,
               child: ElevatedButton(
                 onPressed: isProcessing ? null : processPayment,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 229, 128, 162),
-                  padding: EdgeInsets.symmetric(
-                    vertical: isTablet ? 20 : 16,
-                  ),
+                  backgroundColor:
+                      const Color.fromARGB(255, 229, 128, 162),
                   disabledBackgroundColor: Colors.grey,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
                   isProcessing ? "Processing..." : "Pay Now",

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flower_blossom/core/services/hive/hive_service.dart';
+import 'package:flower_blossom/core/services/storage/user_session.dart';
+import 'package:flower_blossom/features/order/data/order_hive_model.dart';
 import 'package:flower_blossom/features/cart/presentation/cart_item.dart';
 import 'package:flower_blossom/features/dashboard/presentation/pages/dashboard_screen.dart'; // ← ADDED THIS
-import 'payment_screen.dart'; // Import your payment screen
+import 'payment_screen.dart';
+import 'package:flower_blossom/features/cart/presentation/view_model/cart_viewmodel.dart';
+import 'package:flower_blossom/features/dashboard/presentation/view_model/dashboard_viewmodel.dart'; // Import your payment screen
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   final List<CartItem> cartItems;
   final String userName; // From login/signup
   final String userLocation; // From login/signup
@@ -16,10 +23,10 @@ class CheckoutScreen extends StatefulWidget {
   });
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   final _formKey = GlobalKey<FormState>();
   String phone = '';
   String selectedDelivery = '1-3 Days';
@@ -30,14 +37,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   double get grandTotal => itemsTotal + deliveryCharge;
 
-  void navigateToDashboard() {
-    // Navigate directly to dashboard after payment and clear all previous routes
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => DashboardScreen()),
-      (route) => false,
+  Future<void> navigateToDashboard() async {
+    // Save order to Hive before navigating
+    final userSession = ref.read(userSessionServiceProvider);
+    final userId = userSession.getUserId() ?? "guest";
+
+    final order = OrderHiveModel(
+      orderId: const Uuid().v4(),
+      userId: userId,
+      itemNames: widget.cartItems.map((e) => e.name).toList(),
+      itemPrices: widget.cartItems.map((e) => e.price).toList(),
+      itemQuantities: widget.cartItems.map((e) => e.quantity).toList(),
+      totalAmount: grandTotal,
+      orderDate: DateTime.now().toIso8601String(),
+      paymentMethod: 'esewa',
     );
-  }
+
+    await ref.read(hiveServiceProvider).saveOrder(order);
+    await ref.read(cartViewModelProvider.notifier).clearCart();
+    ref.read(dashboardViewModelProvider.notifier).setIndex(0);
+
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);  }
 
   Widget cartItemTile(CartItem item) {
     return Card(

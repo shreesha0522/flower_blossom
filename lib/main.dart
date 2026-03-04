@@ -40,22 +40,39 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => DashboardScreen(),
       },
       onGenerateRoute: (settings) {
+        Widget page;
         switch (settings.name) {
           case '/onboarding':
-            return MaterialPageRoute(builder: (_) => OnboardingFlow());
+            page = OnboardingFlow();
+            break;
           case '/login':
-            return MaterialPageRoute(builder: (_) => LoginPage());
+            page = LoginPage();
+            break;
           case '/dashboard':
-            return MaterialPageRoute(builder: (_) => DashboardScreen());
+            page = DashboardScreen();
+            break;
           default:
-            return MaterialPageRoute(
-              builder: (_) => Scaffold(
-                body: Center(
-                  child: Text('Route not found: ${settings.name}'),
-                ),
+            page = Scaffold(body: Center(child: Text('Route not found')));
+        }
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOutCubic,
+                )),
+                child: child,
               ),
             );
-        }
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        );
       },
     );
   }

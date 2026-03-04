@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flower_blossom/core/utils/user_storage.dart';
+import 'package:flower_blossom/core/services/storage/user_session.dart';
 import 'package:flower_blossom/core/services/upload_service.dart';
 import 'package:flower_blossom/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -321,14 +321,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return true;
   }
 
-  void _saveProfile() {
+  Future<void> _saveProfile() async {
     if (validateProfile()) {
-      UserStorage.register(
+      final authState = ref.read(authViewModelProvider);
+      final userId = authState.entity?.authId ?? "";
+
+      await ref.read(userSessionServiceProvider).saveUserSession(
+        userId: userId,
+        email: emailController.text.trim(),
+        username: usernameController.text.trim(),
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
-        username: usernameController.text.trim(),
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        profilePicture: _profileImageUrl,
       );
 
       showCenterMessage(
@@ -579,7 +583,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     if (isEditing)
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() {
                               firstNameController.text = widget.firstName;
                               lastNameController.text = widget.lastName;
@@ -615,9 +619,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     if (isEditing) SizedBox(width: isTablet ? 16 : 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (isEditing) {
-                            _saveProfile();
+                            await _saveProfile();
                           } else {
                             setState(() {
                               isEditing = true;

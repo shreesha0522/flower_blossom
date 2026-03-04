@@ -10,7 +10,7 @@ void main() {
       return MaterialApp(
         home: PaymentScreen(
           amount: amount,
-          onPaymentSuccess: () {},
+          onPaymentSuccess: () async {},
         ),
       );
     }
