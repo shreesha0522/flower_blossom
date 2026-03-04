@@ -2,19 +2,20 @@ import 'package:flower_blossom/core/utils/user_storage.dart';
 import 'package:flower_blossom/features/auth/presentation/pages/login_screen.dart';
 import 'package:flower_blossom/features/sensors/call_screen.dart'; // ✅ Added
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flower_blossom/app/theme/theme_provider.dart';
 
-class AboutScreen extends StatefulWidget {
+class AboutScreen extends ConsumerStatefulWidget {
   final String userName;
 
   const AboutScreen({super.key, required this.userName});
 
   @override
-  State<AboutScreen> createState() => _AboutScreenState();
+  ConsumerState<AboutScreen> createState() => _AboutScreenState();
 }
 
-class _AboutScreenState extends State<AboutScreen> {
+class _AboutScreenState extends ConsumerState<AboutScreen> {
   String selectedCountry = 'Nepal';
-  bool isDarkMode = false;
   final TextEditingController feedbackController = TextEditingController();
 
   @override
@@ -396,7 +397,7 @@ class _AboutScreenState extends State<AboutScreen> {
     final isTablet = size.shortestSide >= 600;
 
     return Scaffold(
-      backgroundColor: isDarkMode ? Colors.grey[900] : const Color(0xFFFCE4EC),
+      backgroundColor: ref.watch(themeModeProvider) == ThemeMode.dark ? Colors.grey[900] : const Color(0xFFFCE4EC),
       body: Column(
         children: [
           Expanded(
@@ -455,11 +456,11 @@ class _AboutScreenState extends State<AboutScreen> {
                     style: TextStyle(fontSize: isTablet ? 18 : 16),
                   ),
                   trailing: Switch(
-                    value: isDarkMode,
+                    value: ref.watch(themeModeProvider) == ThemeMode.dark,
                     activeColor: const Color.fromARGB(255, 229, 128, 162),
                     onChanged: (val) {
                       setState(() {
-                        isDarkMode = val;
+                        ref.read(themeModeProvider.notifier).state = val ? ThemeMode.dark : ThemeMode.light;
                       });
                     },
                   ),

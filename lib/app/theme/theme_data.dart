@@ -62,3 +62,53 @@ ThemeData getFlowerBlossomTheme() {
     ),
   );
 }
+
+ThemeData getFlowerBlossomDarkTheme() {
+  return ThemeData(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: const Color(0xFF1A1A2E),
+    fontFamily: "Bricolage",
+    colorScheme: const ColorScheme.dark(
+      primary: Color(0xFFE580A2),
+      secondary: Color(0xFF81C784),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: const Color(0xFF2A2A3E),
+      selectedItemColor: const Color(0xFFE580A2),
+      unselectedItemColor: Colors.grey[500],
+      selectedIconTheme: const IconThemeData(size: 28),
+      selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: const TextStyle(fontSize: 14),
+      showUnselectedLabels: true,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF2A2A3E),
+      titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+      iconTheme: IconThemeData(color: Colors.white),
+      elevation: 0,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFE580A2),
+        foregroundColor: Colors.white,
+        textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF2A2A3E),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFF81C784)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Color(0xFFE580A2), width: 2),
+      ),
+      hintStyle: TextStyle(color: Colors.grey[500]),
+    ),
+  );
+}

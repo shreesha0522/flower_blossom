@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flower_blossom/app/theme/theme_data.dart';
+import 'package:flower_blossom/app/theme/theme_provider.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 import 'features/onboarding/onboarding_flow.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
@@ -12,27 +14,31 @@ import 'core/services/hive/hive_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
   final hiveService = HiveService();
   await hiveService.init();
-
   final sharedPreferences = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
       overrides: [
         sharedPreferenceProvider.overrideWithValue(sharedPreferences),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return MaterialApp(
       title: 'Flower Blossom',
       debugShowCheckedModeBanner: false,
+      theme: getFlowerBlossomTheme(),
+      darkTheme: getFlowerBlossomDarkTheme(),
+      themeMode: themeMode,
       routes: {
         '/': (context) => SplashScreen(),
         '/onboarding': (context) => OnboardingFlow(),
@@ -52,7 +58,7 @@ class MyApp extends StatelessWidget {
             page = DashboardScreen();
             break;
           default:
-            page = Scaffold(body: Center(child: Text('Route not found')));
+            page = const Scaffold(body: Center(child: Text('Route not found')));
         }
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
